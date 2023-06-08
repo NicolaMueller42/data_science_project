@@ -23,9 +23,11 @@ test_clusters, test_projected = predict_cluster(data=test_embeddings, pca=pca, c
 
 print_clusters(train_labels, train_clusters)
 
+"""
 visualize_clustering(train_clusters=train_clusters, train_labels=train_labels, train_projected=train_projected,
                      test_clusters=test_clusters, test_labels=test_labels, test_projected=test_projected,
                      fontsize=8, cmap="rainbow", dimensions=3)
 
 visualize_tsne(data=train_embeddings+test_embeddings, labels=train_labels+test_labels, dimensions=2,
             perplexity=np.sqrt(len(train_embeddings)+len(test_embeddings)), fontsize=5, random_state=69)
+"""

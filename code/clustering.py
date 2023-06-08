@@ -1,6 +1,7 @@
 """
 This script contains all the functions necessary for clustering data.
 """
+import matplotlib.colors
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
@@ -29,8 +30,8 @@ def fit_pca(data, dimensions):
     return pca
 
 # Fits an instance of Kernel Principal Components Analysis using given data
-def fit_kernel_pca(data, dimensions, kernel='poly', gamma=0.05):
-    kpca = KernelPCA(n_components=dimensions, kernel=kernel, gamma=gamma)
+def fit_kernel_pca(data, dimensions, kernel='poly', gamma=0.05, random_state=69):
+    kpca = KernelPCA(n_components=dimensions, kernel=kernel, gamma=gamma, random_state=random_state)
     kpca.fit(data)
 
     return kpca
@@ -53,33 +54,40 @@ def predict_cluster(data, pca, clustering):
 # Visualizes the results of clustering as 2D or 3D scatter plots
 def visualize_clustering(train_clusters, train_labels, train_projected, test_clusters=None, test_labels=None,
                          test_projected=None, fontsize=5, cmap="rainbow", dimensions=2):
+    #cmap = matplotlib.colors.Colormap(name=cmap)
     if dimensions == 2:
         fig = plt.figure()
         ax = fig.add_subplot()
         ax.set_title("Clustering of description embeddings projected onto 2D space using KPCA")
 
-        ax.scatter(train_projected[:, 0], train_projected[:, 1], c=train_clusters, cmap=cmap)
-        for i, txt in enumerate(train_labels):
-            ax.text(train_projected[i, 0], train_projected[i, 1], txt, fontsize=fontsize)
-
         if test_labels is not None:
-            ax.scatter(test_projected[:, 0], test_projected[:, 1], c=test_clusters, cmap=cmap)
-            for i, txt in enumerate(test_labels):
-                ax.text(test_projected[i, 0], test_projected[i, 1], txt, fontsize=fontsize)
+            all_projected = np.concatenate((train_projected, test_projected), axis=0)
+            all_clusters = np.concatenate((train_clusters, test_clusters), axis=0)
+            all_labels = train_labels + test_labels
+            ax.scatter(all_projected[:, 0], all_projected[:, 1], c=all_clusters, cmap=cmap)
+            for i, txt in enumerate(all_labels):
+                ax.text(all_projected[i, 0], all_projected[i, 1], txt, fontsize=fontsize)
+        else:
+            ax.scatter(train_projected[:, 0], train_projected[:, 1], c=train_clusters, cmap=cmap)
+            for i, txt in enumerate(train_labels):
+                ax.text(train_projected[i, 0], train_projected[i, 1], txt, fontsize=fontsize)
     else:
         plt.ion()
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
         ax.set_title("Clustering of description embeddings projected onto 3D space using KPCA")
 
-        ax.scatter(train_projected[:, 0], train_projected[:, 1], train_projected[:, 2], c=train_clusters, cmap=cmap)
-        for i, txt in enumerate(train_labels):
-            ax.text(train_projected[i, 0], train_projected[i, 1], train_projected[i, 2], txt, fontsize=fontsize)
-
         if test_labels is not None:
-            ax.scatter(test_projected[:, 0], test_projected[:, 1], test_projected[:, 2], c=test_clusters, cmap=cmap)
-            for i, txt in enumerate(test_labels):
-                ax.text(test_projected[i, 0], test_projected[i, 1], test_projected[i, 2], txt, fontsize=fontsize)
+            all_projected = np.concatenate((train_projected, test_projected), axis=0)
+            all_clusters = np.concatenate((train_clusters, test_clusters), axis=0)
+            all_labels = train_labels + test_labels
+            ax.scatter(all_projected[:, 0], all_projected[:, 1], all_projected[:, 2], c=all_clusters, cmap=cmap)
+            for i, txt in enumerate(all_labels):
+                ax.text(all_projected[i, 0], all_projected[i, 1], all_projected[i, 2], txt, fontsize=fontsize)
+        else:
+            ax.scatter(train_projected[:, 0], train_projected[:, 1], train_projected[:, 2], c=train_clusters, cmap=cmap)
+            for i, txt in enumerate(train_labels):
+                ax.text(train_projected[i, 0], train_projected[i, 1], train_projected[i, 2], txt, fontsize=fontsize)
 
     plt.show(block=True)
 
