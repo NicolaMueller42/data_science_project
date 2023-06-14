@@ -75,9 +75,10 @@ if __name__ == "__main__":
     for desc, label in zip(train_descriptions, train_labels):
         train_df["label"].append(label)
         train_df["description"].append(desc)
-    pd.DataFrame(train_df).to_csv(os.path.join(paths.DATA, "train.csv"))
+    os.makedirs(paths.DATA, exist_ok=True)
+    pd.DataFrame(train_df).to_csv(os.path.join(paths.DATA, "train.csv"), index=False)
     test_df = {"label": [], "description": []}
     for desc, label in zip(test_descriptions, test_labels):
         test_df["label"].append(label)
         test_df["description"].append(desc)
-    pd.DataFrame(test_df).to_csv(os.path.join(paths.DATA, "test.csv"))
+    pd.DataFrame(test_df).to_csv(os.path.join(paths.DATA, "test.csv"), index=False)
