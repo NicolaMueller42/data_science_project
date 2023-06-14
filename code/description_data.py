@@ -66,3 +66,18 @@ test_descriptions = ["FluxAI, an innovative artificial intelligence startup, is 
                 ]
 1
 test_labels = ["FluxAI", "ABC Auto"]
+
+import pandas as pd
+import paths
+import os
+if __name__ == "__main__":
+    train_df = {"label": [], "description": []}
+    for desc, label in zip(train_descriptions, train_labels):
+        train_df["label"].append(label)
+        train_df["description"].append(desc)
+    pd.DataFrame(train_df).to_csv(os.path.join(paths.DATA, "train.csv"))
+    test_df = {"label": [], "description": []}
+    for desc, label in zip(test_descriptions, test_labels):
+        test_df["label"].append(label)
+        test_df["description"].append(desc)
+    pd.DataFrame(test_df).to_csv(os.path.join(paths.DATA, "test.csv"))
