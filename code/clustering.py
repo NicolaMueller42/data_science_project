@@ -18,10 +18,10 @@ def print_clusters(data_labels, clustering_labels):
     for e_label, c_label in zip(data_labels, clustering_labels):
         clusters[c_label].append(e_label)
 
-    for c_label in clusters.keys():
+    for c_label in sorted(list(clusters.keys())):
         print("Cluster " + str(c_label) + ":")
         print(clusters[c_label])
-        print("\n")
+        print("")
 
 # Fits an instance of Principal Components Analysis using given data
 def fit_pca(data, dimensions):
@@ -31,8 +31,8 @@ def fit_pca(data, dimensions):
     return pca
 
 # Fits an instance of Kernel Principal Components Analysis using given data
-def fit_kernel_pca(data, dimensions, kernel='poly', gamma=0.05, random_state=69):
-    kpca = KernelPCA(n_components=dimensions, kernel=kernel, gamma=gamma, random_state=random_state)
+def fit_kernel_pca(data, dimensions, kernel='poly', degree=4, gamma=0.05, random_state=69):
+    kpca = KernelPCA(n_components=dimensions, kernel=kernel, gamma=gamma, random_state=random_state, degree=degree)
     kpca.fit(data)
 
     return kpca
