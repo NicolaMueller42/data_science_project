@@ -10,6 +10,7 @@ if "submitted" not in st.session_state:
     st.session_state.submitted = False
 with st.form("Search"):
     st.text_input("Enter company name:")
+    st.text_input("Enter your company description:")
     st.form_submit_button("Submit")
 
 with st.spinner("Analyzing..."):
