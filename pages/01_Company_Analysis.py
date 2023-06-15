@@ -8,8 +8,16 @@ from code.clustering import fit_pca, fit_kernel_pca, cluster_data, predict_clust
     get_clustering_plot, get_tSNE_plots, print_clusters
 
 st.title("Company Clustering")
-train_embeddings = get_description_embeddings(train_descriptions, max=True)
-test_embeddings = get_description_embeddings(test_descriptions, max=True)
+
+
+@st.cache_data
+def load_embeddings():
+    train_embeddings = get_description_embeddings(train_descriptions, max=True)
+    test_embeddings = get_description_embeddings(test_descriptions, max=True)#
+    return train_embeddings, test_embeddings
+
+
+train_embeddings, test_embeddings = load_embeddings()
 
 n_clusters = int(np.floor(np.sqrt(len(train_descriptions)))) + 4
 
@@ -25,7 +33,7 @@ print_clusters(train_labels, train_clusters)
 
 fig = get_clustering_plot(train_clusters=train_clusters, train_labels=train_labels, train_projected=train_projected,
                      test_clusters=test_clusters, test_labels=test_labels, test_projected=test_projected,
-                     fontsize=8, cmap="rainbow", dimensions=3)
+                     fontsize=8, cmap="rainbow", dimensions=2)
 
 st.pyplot(fig)
 
