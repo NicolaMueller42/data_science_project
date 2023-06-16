@@ -8,6 +8,7 @@ from sentence_transformers import SentenceTransformer
 # and then taking the average or maximum across all dimensions.
 def get_description_embeddings(descriptions, max=True):
     model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+    #model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
     description_embeddings = []
     for description in descriptions:
         sentences = description.split(".")

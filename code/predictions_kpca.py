@@ -1,21 +1,23 @@
 """
 This script computes a clustering for the company description in the training data set and then accepts new descriptions
-and assigns them to existing clusters.
+and assigns them to existing clusters. It uses KPCA for dimensionality reduction and K-Means clustering.
 """
 import numpy as np
 from description_data import train_descriptions, train_labels
 from embeddings import get_description_embeddings
-from clustering import fit_kernel_pca, cluster_data, predict_cluster, visualize_clustering
+from clustering_kpca import fit_kernel_pca, cluster_data, predict_cluster, visualize_clustering
 
 assert len(train_labels) == len(train_descriptions), print(len(train_labels), len(train_descriptions))
 
 # Compute the clustering of the training data
 train_embeddings = get_description_embeddings(train_descriptions, max=True)
 n_clusters = int(np.floor(np.sqrt(len(train_descriptions)))) + 4
-pca = fit_kernel_pca(data=train_embeddings, dimensions=3, random_state=69)
-clustering = cluster_data(data=train_embeddings, pca=pca, n_clusters=n_clusters, n_init=50,
-                                           init="random", random_state=69)
-train_clusters, train_projected = predict_cluster(data=train_embeddings, pca=pca, clustering=clustering)
+n_clusters = 11
+pca = fit_kernel_pca(data=train_embeddings, random_state=42)
+clustering = cluster_data(data=train_embeddings, kpca=pca, n_clusters=n_clusters, random_state=42)
+train_clusters, train_projected = predict_cluster(data=train_embeddings, kpca=pca, clustering=clustering)
+visualize_clustering(train_clusters=train_clusters, train_labels=train_labels, train_projected=train_projected,
+                     fontsize=8)
 
 # Store clusters and projected embeddings in dictionaries for later use
 clusters_dict = {}
@@ -28,7 +30,7 @@ for train_label, projected in zip(train_labels, train_projected):
     train_projected_dict[train_label] = projected
 
 
-print("Welcome to LLM-based Saarland Economy Clustering!")
+print("Welcome to LM-based Saarland Economy Clustering!")
 while True:
     print("Press 1 for a location recommendation and 0 for leaving the application.")
     command = int(input())
@@ -40,7 +42,7 @@ while True:
     test_description = input()
 
     test_embeddings = get_description_embeddings([test_description], max=True)
-    test_clusters, test_projected = predict_cluster(data=test_embeddings, pca=pca, clustering=clustering)
+    test_clusters, test_projected = predict_cluster(data=test_embeddings, kpca=pca, clustering=clustering)
 
     print("\n")
     print(f"Our analysis assigned {test_label} to the cluster {test_clusters[0]}, which contains the following companies (ordered according to similarity):")
@@ -63,5 +65,5 @@ while True:
     if command == 2:
         visualize_clustering(train_clusters=train_clusters, train_labels=train_labels, train_projected=train_projected,
                              test_clusters=test_clusters, test_labels=[test_label], test_projected=test_projected,
-                             fontsize=8, cmap="rainbow", dimensions=3)
+                             fontsize=8)
     print("\n")
