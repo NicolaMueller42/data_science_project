@@ -90,7 +90,7 @@ def predict_clusters(projected_data, n_clusters):
 def visualize_clustering(clusters, labels, projected, fontsize=5):
     fig = plt.figure(figsize=(15, 10))
     ax = fig.add_subplot()
-    ax.set_title("Clustering of description embeddings projected into 2D space using t-SNE")
+    ax.set_title("Agglomerative Clustering of Description Embeddings Projected into 2D Space Using t-SNE", fontsize=fontsize+10)
 
     # plot data points and names
     for i, txt in enumerate(labels):
@@ -147,5 +147,6 @@ def visualize_clustering(clusters, labels, projected, fontsize=5):
         offset = (np.max(projected[:, 1]) - np.min(projected[:, 1])) * 0.025
         ax.text(np.min(points[:, 0]), np.max(points[:, 1])+offset, "Cluster "+str(cluster), fontsize=fontsize+5, alpha=0.5, color=colors[cluster])
 
+    #plt.savefig("clustering_tsne.png", dpi=300, bbox_inches='tight', pad_inches=0.05)
     plt.show(block=True)
 

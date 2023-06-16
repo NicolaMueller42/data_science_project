@@ -52,7 +52,7 @@ def visualize_clustering(train_clusters, train_labels, train_projected, test_clu
                          test_projected=None, fontsize=5):
     fig = plt.figure(figsize=(15, 10))
     ax = fig.add_subplot()
-    ax.set_title("Clustering of description embeddings projected into 2D space using KPCA")
+    ax.set_title("K-Means Clustering of Description Embeddings Projected into 2D Space Using KPCA", fontsize=fontsize+10)
 
     if test_labels is not None:
         all_projected = np.concatenate((train_projected, test_projected), axis=0)
@@ -123,4 +123,5 @@ def visualize_clustering(train_clusters, train_labels, train_projected, test_clu
         ax.text(np.min(points[:, 0]), np.max(points[:, 1]) + offset, "Cluster " + str(cluster),
                 fontsize=fontsize + 5, alpha=0.5, color=colors[cluster])
 
+    #plt.savefig("clustering_kpca.png", dpi=300, bbox_inches='tight', pad_inches=0.05)
     plt.show(block=True)
