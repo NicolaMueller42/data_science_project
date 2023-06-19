@@ -27,6 +27,7 @@ def get_description_embeddings(descriptions, max=True):
 
 
 def get_full_embeddings(descriptions):
+#def get_description_embeddings(descriptions):
     model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
     description_embeddings = []
     min_sentences = 100

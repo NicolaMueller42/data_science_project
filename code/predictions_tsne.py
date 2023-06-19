@@ -10,7 +10,7 @@ from clustering_tsne import project_tsne, predict_clusters, visualize_clustering
 assert len(train_labels) == len(train_descriptions), print(len(train_labels), len(train_descriptions))
 
 # Compute the clustering of the training data
-train_embeddings = get_description_embeddings(train_descriptions, max=True)
+train_embeddings = get_description_embeddings(train_descriptions)
 n_clusters = int(np.floor(np.sqrt(len(train_descriptions)))) + 5
 n_clusters = 11
 projected_train_embeddings = project_tsne(data=train_embeddings, dimensions=2, perplexity=np.sqrt(len(train_embeddings)),
@@ -31,7 +31,7 @@ while True:
     print("Please enter your company's description")
     new_description = input()
 
-    new_embedding = get_description_embeddings([new_description], max=True)
+    new_embedding = get_description_embeddings([new_description])
     all_embeddings = train_embeddings + new_embedding
     all_labels = train_labels + [new_label]
     projected_embeddings = project_tsne(data=all_embeddings, dimensions=2, perplexity=np.sqrt(len(all_embeddings)),

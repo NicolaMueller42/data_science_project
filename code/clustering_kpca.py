@@ -102,8 +102,12 @@ def visualize_clustering(train_clusters, train_labels, train_projected, test_clu
 
         # compute convex hull
         try:
-            hull = ConvexHull(points)
+            hull = ConvexHull(points)  # computation might not work if data points in a cluster have a very weird position
         except:
+            # plot the label of the cluster
+            offset = (np.max(all_projected[:, 1]) - np.min(all_projected[:, 1])) * 0.025
+            ax.text(np.min(points[:, 0]), np.max(points[:, 1]) + offset, "Cluster " + str(cluster),
+                    fontsize=fontsize + 5, alpha=0.5, color=colors[cluster])
             continue
         x_hull = np.append(points[hull.vertices, 0],
                            points[hull.vertices, 0][0])
