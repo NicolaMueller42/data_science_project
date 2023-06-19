@@ -4,6 +4,12 @@
 \documentclass[conference]{IEEEtran}
 \IEEEoverridecommandlockouts
 
+
+% TODO commands package
+\usepackage{todonotes}
+\newcommand{\pe}[1]{\todo[inline, backgroundcolor=green]{PE: #1}}
+
+
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
@@ -51,7 +57,12 @@ I need the business guys to check the following paragraph!
 
 Identifying market segments in regional economies is crucial for effective marketing strategies and making well-informed business decisions. Further, combining geographical data of companies' locations with information on their corresponding market segments allows for detecting business clusters, which are local concentrations of businesses, manufacturers, suppliers, and institutions from the same field. This geographic proximity of related businesses enables efficient cooperation and knowledge transfer, which has been shown to significantly increase the productivity of all businesses within the cluster (citation). Thus, establishing or further developing business clusters is of high interest to companies and local governments.
 
+\pe{I find the claims made in this paragraph to be to not backed by evidence. While I have no economic background, I was able to source some existing literature, e.g. \href{http://biblioteca.fundacionicbc.edu.ar/images/d/de/Clusters_1.pdf}{1}, \href{https://onlinelibrary.wiley.com/doi/full/10.1111/j.1536-7150.2011.00819.x}{2},
+\href{https://www.jstor.org/stable/144358?seq=1}{3}, \href{https://www.emerald.com/insight/content/doi/10.1108/14715200280001472/full/pdf?title=cluster-theory-and-practice-advantages-for-the-small-business-locating-in-a-vibrant-cluster}{4}. Feel free to add the standard literature / different sources}
+
+
 However, the identification of market segments, and moreover that of business clusters, is complicated by the fact that data on regional companies is often unavailable or difficult to analyze due to non-numerical, irrelevant, or missing features.
+\pe{This seems a harsh claim, in practice one could argue that it is available through regional connections}
 
 This work demonstrates how to identify market segments and develop business clusters by introducing an automatic clustering pipeline and location recommendation system for economic data from the German federal state Saarland.
 
@@ -66,6 +77,7 @@ $3)$ We further reduce the dimensionality of the embeddings using non-linear dim
 $4)$ Lastly, we apply well-established clustering algorithms in the low-dimensional feature space to assign each company to a cluster corresponding to a potential market segment.
 
 Our location recommendation system builds upon the clustering pipeline by computing an embedding of a novel company's description, assigning it to a cluster, and then identifying the most similar companies within the cluster. The system then recommends that the novel company locate its site near an established company acting in the same market segment, which fosters business cluster development in Saarland.
+\pe{I have yet to find a backing for this approach, feel free to help me out here}
 
 We provide a graphical user interface for our methods, which visualizes the clustering of companies in Saarland and their locations in an interactive manner, allowing end-users to analyze the various market segments. Further, the interface supports making location recommendations for new company sites using text inputs.
 
@@ -90,6 +102,7 @@ The remaining parts of this paper are structured as follows: In section \MakeUpp
 \end{itemize}
 \color{black}
 
+
 In natural language processing (NLP), translating text data to machine-processable representations is a fundamental challenge for numerous tasks, such as machine translation~\cite{qi2018and}, sentiment analysis~\cite{rezaeinia2019sentiment}, and information retrieval~\cite{ye2016word}, due to the complexity and variability of natural language. A popular approach for representing text data is the utilization of so-called \emph{embeddings}: vectorized representations of text with the property that vectors of text data with similar semantic and syntactic properties will have a smaller distance to vectors of text data with different properties. Thus, embeddings enable quantifying semantic and syntactic similarity in terms of distances in a low-dimensional, dense vector space, making them ideal for applying clustering to our sparse dataset of high-dimensional company descriptions.  
 
 In general, embeddings are learned by training a neural network to perform a task requiring understanding semantic and syntactic information, such as predicting words given their surrounding contexts or predicting subsequent words in sentences. In this process, the network learns a mapping from its text input to low-dimensional representations, containing the information needed to generate correct outputs. Hence, the outputs of this mapping encode all relevant semantic and syntactic information in the text inputs, meaning that, after training, the network's corresponding layers can be reused to compute embeddings for other downstream tasks.
@@ -102,9 +115,9 @@ Mikolov et al~\cite{mikolov2013efficient}. popularized learning word embeddings 
 Our goal is to collect data points on companies in Saarland and cluster them to identify market segments and recommend locations for companies who plan to establish new sites, such that it supports the development of business clusters. We will present our clustering pipeline and then examine how we can use the results to provide location recommendations. 
 
 \subsection{Identifying Market Segments through Clustering}
-Figure \hyperref{fig:pipeline}{$1$} shows a graphical representation of our clustering pipeline, consisting of $4$ steps: $1)$ Collection of descriptions from company websites, $2)$ converting the descriptions to embeddings, $3)$ reducing the dimensionality of the embeddings, and $4)$ applying a clustering algorithm. In the following, we will examine each of these steps in detail.
+Figure \ref{fig:pipeline} shows a graphical representation of our clustering pipeline, consisting of $4$ steps: $1)$ Collection of descriptions from company websites, $2)$ converting the descriptions to embeddings, $3)$ reducing the dimensionality of the embeddings, and $4)$ applying a clustering algorithm. In the following, we will examine each of these steps in detail.
 
-\textit{$1)$ Collect Descriptions:} Given that high-quality economic data is highly valuable, there are no freely available data sets we could rely on for our purposes, meaning we need to build our dataset from scratch. The traditional approach for building such a dataset would be to gather several attributes, like revenue, number of employers, and products, for many companies in Saarland and then store each in a fixed-size vector. However, this approach has several drawbacks: It is not straightforward to encode non-numerical attributes, like products and customer base, such that clustering algorithms can parse them without introducing an unwanted ordering of the attributes' values. Further, some attributes may be unavailable for some companies, meaning we would need to discard them because we require fixed-size vectors, or we would need to insert dummy values, which could lead to unwanted effects. Lastly, representing a company using a small number of publicly available attributes might be insufficient for capturing all relevant characteristics. For instance, consider the smartphone manufacturers Apple and Samsung: Both companies build smartphones, have over $100.000$ employees, have revenues of over $200$ billion dollars, and have production and sales sites worldwide. Given these attributes, one could argue that Apple and Samsung are very similar companies. Yet, it is commonly known that Apple, with its minimalist design, high-end smartphones targeted toward customers looking to differentiate themselves from other people, and Samsung, with its more utilitarian smartphones targeted toward a broad customer base, are companies with fundamentally different characters.
+\textit{$1)$ Collect Descriptions:} Given that high-quality economic data is highly valuable, there are no freely available data sets we could rely on for our purposes, meaning we need to build our dataset from scratch. \pe{TODO: rephrase} The traditional approach for building such a dataset would be to gather several attributes, like revenue, number of employers, and products, for many companies in Saarland and then store each in a fixed-size vector. \pe{TODO: backup with accepted approach} However, this approach has several drawbacks: It is not straightforward to encode non-numerical attributes, like products and customer base, such that clustering algorithms can parse them without introducing an unwanted ordering of the attributes' values. Further, some attributes may be unavailable for some companies, meaning we would need to discard them because we require fixed-size vectors, or we would need to insert dummy values, which could lead to unwanted effects. Lastly, representing a company using a small number of publicly available attributes might be insufficient for capturing all relevant characteristics. For instance, consider the smartphone manufacturers Apple and Samsung: Both companies build smartphones, have over $100.000$ employees, have revenues of over $200$ billion dollars, and have production and sales sites worldwide. Given these attributes, one could argue that Apple and Samsung are very similar companies. Yet, it is commonly known that Apple, with its minimalist design, high-end smartphones targeted toward customers looking to differentiate themselves from other people, and Samsung, with its more utilitarian smartphones targeted toward a broad customer base, are companies with fundamentally different characters.
 To address these challenges to dataset construction, we propose representing companies by the description on their websites instead of numerical attributes. Since companies want to present themselves publicly in a way that attracts customers and investors, these descriptions contain the information needed to represent them accurately. 
 
 \textit{$2)$ Compute Description Embeddings:} To achieve the fixed-size inputs required by clustering algorithms, we map each company description to an embedding that describes the data in a low-dimensional space. We rely on a sentence transformer neural network architecture to compute embeddings for each sentence in a company's description. We propose two approaches to get a single embedding for each description: we repeatedly concatenate individual sentence embeddings until a fixed size is achieved, or we take the maximum over each feature dimension. The first approach, which we will call padding, preserves each sentence embedding's information but may introduce bias and high dimensionality, whereas the second approach, which we will call max pooling, achieves a lower dimensionality but may discard relevant information by only keeping the largest features.
@@ -188,6 +201,7 @@ For Bratwurst Bliss, the system recommends settling near the meat producer Kunzl
 Lastly, our system recommends placing PanzerTech's new site close to Diehl Defence, corresponding to the only weapons manufacturer in our dataset. Hence, this shows that our system does not need a large number of samples from each market segment to give reasonable location recommendations.
 
 We conclude that our location recommendation system can reliably identify companies in our dataset with similar characteristics to companies seeking to establish sites in Saarland and thus can be used to foster the development of business clusters.
+
 
 \subsection{Limitations}
 We observed in subsection \textit{A} that we could not derive corresponding market segments for a small number of clusters because the cluster members had too different characteristics. These companies mostly belonged to sectors that are underrepresented in our dataset, such as ceramics manufacturing and pharmaceutics, so we would likely achieve more concise cluster assignments if we added more companies from these sectors to our dataset.
