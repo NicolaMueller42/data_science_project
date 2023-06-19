@@ -2,9 +2,9 @@
 This script computes a clustering for given data and makes predictions for new data points.
 """
 import numpy as np
-from description_data import train_descriptions, train_labels, test_descriptions, test_labels
-from embeddings import get_description_embeddings, get_full_embeddings
-from clustering import fit_pca, fit_kernel_pca, cluster_data, predict_cluster, visualize_clustering, visualize_tsne, print_clusters
+from code.description_data import train_descriptions, train_labels, test_descriptions, test_labels
+from code.embeddings import get_description_embeddings, get_full_embeddings
+from code.clustering import fit_pca, fit_kernel_pca, cluster_data, predict_cluster, visualize_clustering, visualize_tsne, print_clusters
 
 assert len(train_labels) == len(train_descriptions), print(len(train_labels), len(train_descriptions))
 

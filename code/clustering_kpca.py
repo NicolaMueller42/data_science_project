@@ -11,6 +11,7 @@ import matplotlib
 
 colors = matplotlib.colors.ListedColormap(plt.cm.tab20.colors).colors
 
+
 # Prints the results of clustering
 def print_clusters(data_labels, clustering_labels):
     clusters = {}
@@ -25,12 +26,14 @@ def print_clusters(data_labels, clustering_labels):
         print(clusters[c_label])
         print("\n")
 
+
 # Fits an instance of Kernel Principal Components Analysis using given data
 def fit_kernel_pca(data, kernel='poly', gamma=0.05, random_state=69):
     kpca = KernelPCA(n_components=2, kernel=kernel, gamma=gamma, random_state=random_state)
     kpca.fit(data)
 
     return kpca
+
 
 # Computes the clustering: First the data's dimensionality is reduced by transforming it according to the given PCA/KPCA
 # instance and then K-Means is applied to cluster the proejcted data
@@ -40,6 +43,7 @@ def cluster_data(data, kpca, n_clusters, random_state=69):
 
     return clustering
 
+
 # Assigns new data points to established clusters
 def predict_cluster(data, kpca, clustering):
     projected_data = kpca.transform(data)
@@ -47,12 +51,14 @@ def predict_cluster(data, kpca, clustering):
 
     return clustering_labels, projected_data
 
+
 # Visualizes the results of clustering as 2D or 3D scatter plots
 def visualize_clustering(train_clusters, train_labels, train_projected, test_clusters=None, test_labels=None,
                          test_projected=None, fontsize=5):
     fig = plt.figure(figsize=(15, 10))
     ax = fig.add_subplot()
-    ax.set_title("K-Means Clustering of Description Embeddings Projected into 2D Space Using KPCA", fontsize=fontsize+10)
+    ax.set_title("K-Means Clustering of Description Embeddings Projected into 2D Space Using KPCA",
+                 fontsize=fontsize + 10)
 
     if test_labels is not None:
         all_projected = np.concatenate((train_projected, test_projected), axis=0)
@@ -102,7 +108,8 @@ def visualize_clustering(train_clusters, train_labels, train_projected, test_clu
 
         # compute convex hull
         try:
-            hull = ConvexHull(points)  # computation might not work if data points in a cluster have a very weird position
+            hull = ConvexHull(
+                points)  # computation might not work if data points in a cluster have a very weird position
         except:
             # plot the label of the cluster
             offset = (np.max(all_projected[:, 1]) - np.min(all_projected[:, 1])) * 0.025
@@ -127,5 +134,5 @@ def visualize_clustering(train_clusters, train_labels, train_projected, test_clu
         ax.text(np.min(points[:, 0]), np.max(points[:, 1]) + offset, "Cluster " + str(cluster),
                 fontsize=fontsize + 5, alpha=0.5, color=colors[cluster])
 
-    #plt.savefig("clustering_kpca.png", dpi=300, bbox_inches='tight', pad_inches=0.05)
+    # plt.savefig("clustering_kpca.png", dpi=300, bbox_inches='tight', pad_inches=0.05)
     plt.show(block=True)

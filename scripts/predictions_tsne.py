@@ -3,9 +3,9 @@ This script computes a clustering for the company description in the training da
 and assigns them to existing clusters. It uses t-SNE for dimensionality reduction and Agglomerative clustering.
 """
 import numpy as np
-from description_data import train_descriptions, train_labels
-from embeddings import get_description_embeddings
-from clustering_tsne import project_tsne, predict_clusters, visualize_clustering
+from code.description_data import train_descriptions, train_labels
+from code.embeddings import get_description_embeddings
+from code.clustering_tsne import project_tsne, predict_clusters, visualize_clustering
 
 assert len(train_labels) == len(train_descriptions), print(len(train_labels), len(train_descriptions))
 

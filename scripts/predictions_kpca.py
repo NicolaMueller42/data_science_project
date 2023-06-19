@@ -3,9 +3,9 @@ This script computes a clustering for the company description in the training da
 and assigns them to existing clusters. It uses KPCA for dimensionality reduction and K-Means clustering.
 """
 import numpy as np
-from description_data import train_descriptions, train_labels
-from embeddings import get_description_embeddings
-from clustering_kpca import fit_kernel_pca, cluster_data, predict_cluster, visualize_clustering
+from code.description_data import train_descriptions, train_labels
+from code.embeddings import get_description_embeddings
+from code.clustering_kpca import fit_kernel_pca, cluster_data, predict_cluster, visualize_clustering
 
 assert len(train_labels) == len(train_descriptions), print(len(train_labels), len(train_descriptions))
 

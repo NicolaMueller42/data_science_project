@@ -1,4 +1,4 @@
-from description_data import train_labels
+from code.description_data import train_labels
 
 def save_strings_to_file(strings, filename):
     """

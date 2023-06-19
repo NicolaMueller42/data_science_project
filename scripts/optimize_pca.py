@@ -5,8 +5,8 @@ import numpy as np
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error
 from sklearn.decomposition import PCA, KernelPCA
-from description_data import train_descriptions
-from embeddings import get_description_embeddings, get_full_embeddings
+from code.description_data import train_descriptions
+from code.embeddings import get_description_embeddings, get_full_embeddings
 
 embeddings = get_full_embeddings(train_descriptions)
 def my_scorer(estimator, X, y=None):
