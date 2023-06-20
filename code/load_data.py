@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def get_economic_data(company_name):
     economic_dataframe = pd.read_csv('../data/economic_data.csv')
     description_dataframe = pd.read_csv('../data/train.csv')

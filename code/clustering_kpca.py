@@ -28,8 +28,8 @@ def print_clusters(data_labels, clustering_labels):
 
 
 # Fits an instance of Kernel Principal Components Analysis using given data
-def fit_kernel_pca(data, kernel='poly', gamma=0.05, random_state=69):
-    kpca = KernelPCA(n_components=2, kernel=kernel, gamma=gamma, random_state=random_state)
+def fit_kernel_pca(data, kernel='poly', gamma=0.05, random_state=69, n_components=2):
+    kpca = KernelPCA(n_components=n_components, kernel=kernel, gamma=gamma, random_state=random_state)
     kpca.fit(data)
 
     return kpca

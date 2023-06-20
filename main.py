@@ -4,17 +4,15 @@ import numpy as np
 import pandas as pd
 import code.description_data as data
 import requests
-
+st.set_page_config(layout="wide")
 st.title("Home")
 if "submitted" not in st.session_state:
     st.session_state.submitted = False
 with st.form("Search"):
     st.text_input("Enter company name:")
     st.text_input("Enter your company description:")
+    method = st.radio("Clustering method", options=["t-SNE", "kPCA"])
     st.form_submit_button("Submit")
-
-with st.spinner("Analyzing..."):
-    time.sleep(3)
 
 
 def get_lat_lon_of_request(search_string):
