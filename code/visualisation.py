@@ -19,9 +19,12 @@ def get_hover_data():
     return df
 
 
-@st.cache_resource
-def get_embeddings(embedding_type="max"):
-    return get_description_embeddings(train_descriptions, embed_type=embedding_type)
+@st.cache_data
+def get_embeddings(embedding_type="max", test_description=None):
+    if test_description:
+        return get_description_embeddings(train_descriptions + [test_description], embed_type=embedding_type)
+    else:
+        return get_description_embeddings(train_descriptions, embed_type=embedding_type)
 
 
 @st.cache_data
