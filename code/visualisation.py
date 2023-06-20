@@ -145,6 +145,7 @@ def plot_3d(clusters, projected):
                             "Customer Base": True,
                             "Market Positioning": True,
                             "Revenue": True})
+
     fig.update_traces(textposition='top center')
     fig.update_layout(
         height=750,
@@ -160,11 +161,11 @@ def plot_3d(clusters, projected):
 
 @st.cache_data
 def add_clusters(fig, clusters, projected):
-    new_fig = go.Figure(fig)
+    traces = []
     for cluster in np.unique(clusters):
         points = projected[clusters == cluster]
         cluster_x, cluster_y = compute_hull(points)
-        new_fig.add_trace(go.Scatter(
+        traces.append(go.Scatter(
             x=cluster_x,
             y=cluster_y,
             fill="toself",
@@ -176,21 +177,32 @@ def add_clusters(fig, clusters, projected):
             textposition="middle center",
             showlegend=False,
         ))
+    new_fig = go.Figure(data=traces)
+    new_fig.add_traces(data=fig.data)
+    new_fig.update_layout(
+        height=750,
+        margin=go.Margin(
+            l=0,
+            r=0,
+            b=0,
+            t=10
+        )
+    )
     return new_fig
 
 
 @st.cache_data
 def add_industry_clusters(fig, projected):
-    new_fig = go.Figure(fig)
     df = pd.merge(
         pd.DataFrame(projected),
         get_hover_data(),
         right_index=True, left_index=True
     )
+    traces = []
     for i, industry in enumerate(np.unique(df["Industry"])):
         points = projected[df["Industry"] == industry]
         cluster_x, cluster_y = compute_hull(points)
-        new_fig.add_trace(go.Scatter(
+        traces.append(go.Scatter(
             x=cluster_x,
             y=cluster_y,
             fill="toself",
@@ -202,4 +214,15 @@ def add_industry_clusters(fig, projected):
             textposition="middle center",
             showlegend=True,
         ))
+    new_fig = go.Figure(data=traces)
+    new_fig.add_traces(data=fig.data)
+    new_fig.update_layout(
+        height=750,
+        margin=go.Margin(
+            l=0,
+            r=0,
+            b=0,
+            t=10
+        )
+    )
     return new_fig
