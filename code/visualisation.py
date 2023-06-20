@@ -84,33 +84,44 @@ def compute_kpca(n_clusters, dimensions, train_embeddings):
     return predict_cluster(train_embeddings, kpca, clustering)
 
 
-
 @st.cache_data
 def plot_2d(clusters, projected):
     str_cluster = [str(cluster) for cluster in clusters]
     df = pd.merge(
-        pd.DataFrame(projected),
+        pd.DataFrame(projected, columns=["x", "y"]),
         get_hover_data(),
         right_index=True, left_index=True
     )
     fig = px.scatter(df,
-                     x=0,
-                     y=1,
+                     x="x",
+                     y="y",
                      color=str_cluster,
                      labels={"color": "Cluster"},
                      category_orders={"color": list(sorted(str_cluster, key=lambda x: int(x)))},
                      color_discrete_sequence=px.colors.qualitative.Light24,
-                     text=train_labels,
+                     text="Company",
                      hover_name="Company",
+                     custom_data=df,
                      hover_data={
+                         "x": False,
+                         "y": False,
                          "Industry": True,
                          "Products": True,
                          "Customer Base": True,
                          "Market Positioning": True,
                          "Revenue": True})
-    fig.update_traces(textposition='top center')
+    fig.update_traces(textposition='top center',
+                      hovertemplate='<b>%{customdata[3]}</b><br>'
+                                    'Industry: %{customdata[4]} <br>'
+                                    'Products: %{customdata[5]} <br>'
+                                    'Customer base: %{customdata[6]} <br>'
+                                    'Market Position: %{customdata[7]} <br>'
+                                    'Revenue: %{customdata[8]}€')
     fig.update_layout(
         height=750,
+        hoverlabel=dict(
+            font_size=16
+        ),
         margin=go.Margin(
             l=0,
             r=0,
@@ -135,6 +146,7 @@ def plot_3d(clusters, projected):
                         z=2,
                         color=str_cluster,
                         labels={"color": "Cluster"},
+                        custom_data=df,
                         category_orders={"color": list(sorted(str_cluster, key=lambda x: int(x)))},
                         color_discrete_sequence=px.colors.qualitative.Light24,
                         text=train_labels,
@@ -146,9 +158,18 @@ def plot_3d(clusters, projected):
                             "Market Positioning": True,
                             "Revenue": True})
 
-    fig.update_traces(textposition='top center')
+    fig.update_traces(textposition='top center',
+                      hovertemplate='<b>%{customdata[4]}</b><br>'
+                                    'Industry: %{customdata[5]} <br>'
+                                    'Products: %{customdata[6]} <br>'
+                                    'Customer base: %{customdata[7]} <br>'
+                                    'Market Position: %{customdata[8]} <br>'
+                                    'Revenue: %{customdata[9]}€',)
     fig.update_layout(
         height=750,
+        hoverlabel=dict(
+            font_size=16
+        ),
         margin=go.Margin(
             l=0,
             r=0,
@@ -165,6 +186,8 @@ def add_clusters(fig, clusters, projected):
     for cluster in np.unique(clusters):
         points = projected[clusters == cluster]
         cluster_x, cluster_y = compute_hull(points)
+        mean_x = np.mean(cluster_x)
+        mean_y = np.mean(cluster_y)
         traces.append(go.Scatter(
             x=cluster_x,
             y=cluster_y,
@@ -176,11 +199,26 @@ def add_clusters(fig, clusters, projected):
             text=f"Cluster {cluster}",
             textposition="middle center",
             showlegend=False,
+            hoverinfo="none"
+        ))
+        traces.append(go.Scatter(
+            x=[mean_x],
+            y=[mean_y],
+            mode="text",
+            fillcolor=px.colors.qualitative.Light24[cluster],
+            text=f"Cluster {cluster}",
+            textposition="middle center" if len(points[:, 0]) > 1 else "bottom right",
+            textfont=dict(color=px.colors.qualitative.Light24[cluster]),
+            showlegend=False,
+            hoverinfo="none"
         ))
     new_fig = go.Figure(data=traces)
     new_fig.add_traces(data=fig.data)
     new_fig.update_layout(
         height=750,
+        hoverlabel=dict(
+            font_size=16
+        ),
         margin=go.Margin(
             l=0,
             r=0,
@@ -188,6 +226,8 @@ def add_clusters(fig, clusters, projected):
             t=10
         )
     )
+    new_fig.update_xaxes(showgrid=False, zeroline=False, showticklabels=True, mirror=True, showline=True)
+    new_fig.update_yaxes(showgrid=False, zeroline=False, showticklabels=True, mirror=True, showline=True)
     return new_fig
 
 
@@ -202,6 +242,8 @@ def add_industry_clusters(fig, projected):
     for i, industry in enumerate(np.unique(df["Industry"])):
         points = projected[df["Industry"] == industry]
         cluster_x, cluster_y = compute_hull(points)
+        mean_x = np.mean(cluster_x)
+        mean_y = np.mean(cluster_y)
         traces.append(go.Scatter(
             x=cluster_x,
             y=cluster_y,
@@ -212,12 +254,26 @@ def add_industry_clusters(fig, projected):
             line=dict(color=px.colors.qualitative.Light24[i]),
             text=f"{industry}",
             textposition="middle center",
-            showlegend=True,
+            showlegend=False,
+        ))
+        traces.append(go.Scatter(
+            x=[mean_x],
+            y=[mean_y],
+            mode="text",
+            fillcolor=px.colors.qualitative.Light24[i],
+            text=f"{industry}",
+            textposition="middle center" if len(points[:, 0]) > 1 else "bottom right",
+            textfont=dict(color=px.colors.qualitative.Light24[i]),
+            showlegend=False,
+            hoverinfo="none"
         ))
     new_fig = go.Figure(data=traces)
     new_fig.add_traces(data=fig.data)
     new_fig.update_layout(
         height=750,
+        hoverlabel=dict(
+            font_size=16
+        ),
         margin=go.Margin(
             l=0,
             r=0,

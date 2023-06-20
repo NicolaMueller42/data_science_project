@@ -37,7 +37,8 @@ with selection_area:
     dimensions = st.radio("Select number of dimensions to display", options=["2d", "3d"])
 with plot_area:
     if dimensions == "2d":
-        compare_mode = st.checkbox("Compare to Industry data")
+        # compare_mode = st.checkbox("Compare to Industry data")
+        compare_mode = False
         if compare_mode:
             new_fig = add_industry_clusters(fig_2d, plot_data_dict["2d"][1])
         else:
@@ -45,5 +46,3 @@ with plot_area:
         st.plotly_chart(new_fig, use_container_width=True)
     else:
         st.plotly_chart(fig_3d, use_container_width=True)
-
-st.dataframe(get_hover_data())
