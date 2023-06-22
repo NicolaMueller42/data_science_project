@@ -1,7 +1,17 @@
 import streamlit as st
 import numpy as np
+import requests
+import os
+
+import paths
+from code.description_data import train_labels
+import urllib
+import pandas as pd
 from code.visualisation import get_embeddings, compute_tsne, compute_kpca, \
-    plot_2d, plot_3d, get_hover_data, add_industry_clusters, add_clusters
+    plot_2d, plot_3d, plot_map, add_clusters
+
+
+st.set_page_config(layout="wide")
 
 
 @st.cache_data
@@ -18,9 +28,6 @@ def compute_clustering(embedding_type, method, n_clusters):
     return {"2d": (clusters_2d, projected_2d),
             "3d": (clusters_3d, projected_3d)}
 
-
-st.set_page_config(layout="wide")
-st.title("Company Clustering")
 
 selection_area, plot_area = st.columns([1, 4])
 with selection_area:
@@ -43,12 +50,24 @@ with selection_area:
     dimensions = st.radio("Select number of dimensions to display", options=["2d", "3d"])
 with plot_area:
     if dimensions == "2d":
-        # compare_mode = st.checkbox("Compare to Industry data")
-        compare_mode = False
-        if compare_mode:
-            new_fig = add_industry_clusters(fig_2d, plot_data_dict["2d"][1])
-        else:
+        compare_mode = st.radio("Plot Style", options=["Cluster Plot", "Map", "Both"], horizontal=True)
+        if compare_mode == "Map":
+            new_fig = plot_map(clusters=plot_data_dict["2d"][0])
+            st.plotly_chart(new_fig, use_container_width=True)
+            st.warning("Some companies might be missing on this map!")
+        elif compare_mode == "Cluster Plot":
             new_fig = add_clusters(fig_2d, plot_data_dict["2d"][0], plot_data_dict["2d"][1])
-        st.plotly_chart(new_fig, use_container_width=True)
+            st.plotly_chart(new_fig, use_container_width=True)
+        else:
+            plot, map_col = st.columns([1, 1])
+            with plot:
+                new_fig = add_clusters(fig_2d, plot_data_dict["2d"][0], plot_data_dict["2d"][1])
+                st.plotly_chart(new_fig, use_container_width=True)
+            with map_col:
+                new_fig = plot_map(clusters=plot_data_dict["2d"][0])
+                st.plotly_chart(new_fig, use_container_width=True)
+                st.warning("Some companies might be missing on this map!")
     else:
         st.plotly_chart(fig_3d, use_container_width=True)
+
+
