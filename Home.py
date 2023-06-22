@@ -1,6 +1,6 @@
 import streamlit as st
 
-text, images = st.columns([3, 2])
+text, images = st.columns([3, 1])
 
 with text:
     st.markdown("# Team17 AI Analytics")
