@@ -24,13 +24,19 @@ st.title("Company Clustering")
 
 selection_area, plot_area = st.columns([1, 4])
 with selection_area:
-    with st.expander("Clustering parameters"):
-        with st.form("Clustering parameters"):
-            embedding_type = st.radio("Select embedding",
-                                      options=["Maximum of Features", "Mean of Features", "Concatenated Features"])
-            method = st.radio("Select dimensionality reduction method", options=["t-SNE", "Kernel PCA"])
-            n_clusters = st.slider("Select number of clusters", min_value=2, max_value=24, value=10)
-            st.form_submit_button("Compute clustering")
+    with st.form("Clustering parameters"):
+        embedding_type = st.radio("Select embedding",
+                                  options=["Maximum of Features", "Mean of Features", "Concatenated Features"],
+                                  help="Select how text data will be embedded. "
+                                       "Maximum of Features: Takes the maximum of feature embeddings "
+                                       "across sentences in the description.\n"
+                                       "Mean of Features: Takes the mean of feature embeddings "
+                                       "across sentences in the description.\n"
+                                       "Concatenated Features: Concatenates all features into a large input feature. "
+                                       "Computation usually takes longer using this method.")
+        method = st.radio("Select dimensionality reduction method", options=["t-SNE", "Kernel PCA"])
+        n_clusters = st.slider("Select number of clusters", min_value=2, max_value=24, value=10)
+        st.form_submit_button("Compute clustering")
     plot_data_dict = compute_clustering(embedding_type, method, n_clusters)
     fig_2d = plot_2d(plot_data_dict["2d"][0], plot_data_dict["2d"][1])
     fig_3d = plot_3d(plot_data_dict["3d"][0], plot_data_dict["3d"][1])
