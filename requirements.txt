@@ -1,2 +1,10 @@
 streamlit
-googlemaps
+pandas
+matplotlib
+numpy
+plotly
+sklearn
+scikit-learn
+requests
+scipy
+Pillow
