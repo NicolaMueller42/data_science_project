@@ -117,11 +117,11 @@ def compute_kpca(n_clusters, dimensions, train_embeddings):
 
 
 @st.cache_data
-def plot_map(clusters):
+def plot_map(clusters, plot_connections=False):
     map_df = load_map_df()
     hover_df = get_hover_data()
     df = pd.merge(map_df, hover_df, right_index=True, left_index=True)
-    df["Cluster"] = [str(cluster) for cluster in clusters]
+    df["Cluster"] = [str(cluster) if cluster is not None else None for cluster in clusters]
     selected = df.dropna()
     fig = px.scatter_mapbox(selected, lat="latitude", lon="longitude", color="Cluster", custom_data=selected,
                             text="Company", zoom=9,
@@ -130,7 +130,7 @@ def plot_map(clusters):
                             color_discrete_sequence=px.colors.qualitative.Light24)
     fig.update_layout(mapbox_style='carto-darkmatter')
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-    fig.update_traces(textposition='top center',
+    fig.update_traces(mode="markers+text", showlegend=not plot_connections, textposition='top center',
                       hovertemplate='<b>%{customdata[5]}</b><br>'
                                     'Industry: %{customdata[6]} <br>'
                                     'Products: %{customdata[7]} <br>'
@@ -149,6 +149,33 @@ def plot_map(clusters):
             t=10
         )
     )
+    if plot_connections:
+        data = fig.data
+        for i in reversed(range(len(clusters))):
+            if clusters[i] is None:
+                del clusters[i]
+        for cluster in np.unique(clusters):
+            lats = selected[selected["Cluster"] == str(cluster)]["latitude"]
+            lons = selected[selected["Cluster"] == str(cluster)]["longitude"]
+            mean_lat = np.mean(lats)
+            mean_lon = np.mean(lons)
+            new_lats = []
+            new_lons = []
+            for lat, lon in zip(lats, lons):
+                new_lats += [mean_lat, lat]
+                new_lons += [mean_lon, lon]
+            fig.add_trace(go.Scattermapbox(
+                lat=new_lats,
+                lon=new_lons,
+                fillcolor=px.colors.qualitative.Light24[cluster],
+                mode="lines",
+                opacity=0.1,
+                line=dict(color=px.colors.qualitative.Light24[cluster]),
+                showlegend=False
+            ))
+        fig.add_traces(data=data)
+        if len(np.unique(clusters)) == 1:
+            fig.update_traces(marker=dict(color=px.colors.qualitative.Light24[clusters[0]]))
     return fig
 
 

@@ -5,7 +5,7 @@ import pandas as pd
 import code.description_data as data
 import requests
 from code.visualisation import get_embeddings, compute_tsne, compute_kpca, \
-    plot_2d, plot_3d, get_hover_data, add_industry_clusters, add_clusters
+    plot_2d, plot_3d, plot_map, get_hover_data, add_industry_clusters, add_clusters
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -50,12 +50,13 @@ def load_map_df(labels):
     coords_df = pd.DataFrame(data, columns=["latitude", "longitude"])
     return pd.merge(pd.DataFrame(labels, columns=["labels"]), coords_df, right_index=True, left_index=True)
 
+
 if "expand_input" not in st.session_state:
     st.session_state.expand_input = True
 with st.expander("Input", expanded=st.session_state.expand_input):
     with st.form("Search"):
-        test_label = st.text_input("Enter company name:")
-        test_description = st.text_input("Enter your company description:")
+        test_label = st.text_input("Enter company name:", placeholder="Your company")
+        test_description = st.text_input("Enter your company description:", placeholder="Your company description")
         embedding_type = st.radio("Select embedding",
                                   options=["Maximum of Features", "Mean of Features", "Concatenated Features"],
                                   help="Select how text data will be embedded. "
@@ -71,54 +72,64 @@ with st.expander("Input", expanded=st.session_state.expand_input):
         dimensions = st.radio("Select number of dimensions to use for clustering", options=[2, 3])
         submit = st.form_submit_button("Submit", on_click=close_expander)
 if submit and test_description:
+    test_label = "Your company" if test_label is None else test_label
     clusters, projected = compute_clustering(test_description, embedding_type, method, n_clusters, dimensions)
     with st.expander("Competitors", expanded=True):
         df = get_hover_data()
         competitors = df[clusters[:-1] == clusters[-1]]
-        st.write(f"Your competitors are:")
-        st.dataframe(competitors)
-        st.write(f"Your competitors are working in the following industries: {np.unique(competitors['Industry'].values)}")
-        if dimensions == 2:
-            figure = plot_2d(clusters[:-1], projected[:-1])
-            figure = add_clusters(figure, clusters[:-1], projected[:-1])
-            figure.add_trace(go.Scatter(
-                x=[projected[-1, 0]],
-                y=[projected[-1, 1]],
-                marker=dict(
-                    color=px.colors.qualitative.Light24[clusters[-1]],
-                    size=20,
-                    line=dict(
-                        color='White',
-                        width=2
-                    ),),
-                mode="markers+text",
-                text=test_label,
-                hoverinfo="none",
-                textposition="top center",
-                showlegend=False
-            ))
-            figure.update_layout(height=400)
-            st.plotly_chart(figure, use_container_width=True)
+        if not competitors.empty:
+            st.write(f"Your competitors are:")
+            st.dataframe(competitors)
+            st.write(f"Your competitors are working in the following industries: {np.unique(competitors['Industry'].values)}")
+            if dimensions == 2:
+                figure = plot_2d(clusters[:-1], projected[:-1])
+                figure = add_clusters(figure, clusters[:-1], projected[:-1])
+                figure.add_trace(go.Scatter(
+                    x=[projected[-1, 0]],
+                    y=[projected[-1, 1]],
+                    marker=dict(
+                        color=px.colors.qualitative.Light24[clusters[-1]],
+                        size=20,
+                        line=dict(
+                            color='White',
+                            width=2
+                        ),),
+                    mode="markers+text",
+                    text=test_label,
+                    hoverinfo="none",
+                    textposition="top center",
+                    showlegend=False
+                ))
+                figure.update_layout(height=400)
+            else:
+                figure = plot_3d(clusters[:-1], projected[:-1])
+                figure.update_traces(marker=dict(opacity=0.3))
+                figure.add_trace(go.Scatter3d(
+                    x=[projected[-1, 0]],
+                    y=[projected[-1, 1]],
+                    z=[projected[-1, 2]],
+                    marker=dict(
+                        color=px.colors.qualitative.Light24[clusters[-1]],
+                        size=20,
+                        symbol="square",),
+                    mode="markers+text",
+                    hoverinfo="none",
+                    text=test_label,
+                    textposition="top center",
+                    showlegend=False
+                ))
+                figure.update_layout(height=400)
+            plot, map_plot = st.columns([1, 1])
+            with plot:
+                st.plotly_chart(figure, use_container_width=True)
+            with map_plot:
+                selected = [cluster if cluster == clusters[-1] else None for cluster in clusters[:-1]]
+                map_fig = plot_map(selected, plot_connections=True)
+                map_fig.update_layout(height=400)
+                st.plotly_chart(map_fig)
         else:
-            figure = plot_3d(clusters[:-1], projected[:-1])
-            figure.add_trace(go.Scatter3d(
-                x=[projected[-1, 0]],
-                y=[projected[-1, 1]],
-                z=[projected[-1, 2]],
-                marker=dict(
-                    color=px.colors.qualitative.Light24[clusters[-1]],
-                    size=12,
-                    line=dict(
-                        color='White',
-                        width=2
-                    ), ),
-                mode="markers+text",
-                hoverinfo="none",
-                text=test_label,
-                textposition="top center",
-                showlegend=False
-            ))
-            figure.update_layout(height=400)
-            st.plotly_chart(figure, use_container_width=True)
+            st.warning("Our clustering predicts that no companies in Saarland are very similar to yours based on your"
+                       " given description."
+                       " Try to lower the amount of clusters to see which cluster is the most similar.")
 elif submit and not test_description:
     st.warning("Description must not be empty or else your company cannot be clustered!")
