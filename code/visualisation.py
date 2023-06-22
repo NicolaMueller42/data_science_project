@@ -7,10 +7,39 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+import paths
+import requests
+import urllib
+import os
 from paths import ECO_CSV
 from scipy.cluster.hierarchy import dendrogram
 from scipy.spatial import ConvexHull
 from scipy import interpolate
+
+
+def get_lat_lon_of_request(search_string):
+    url = 'https://nominatim.openstreetmap.org/search/' + urllib.parse.quote(search_string) + '?format=json'
+    response = requests.get(url).json()
+    return response[0]["lat"], response[0]["lon"]
+
+
+@st.cache_data
+def load_map_df():
+    if os.path.exists(paths.MAP_CSV):
+        return pd.read_csv(paths.MAP_CSV)
+    data = np.zeros((len(train_labels), 2))
+    for i, company in enumerate(train_labels):
+        print(i, company)
+        try:
+            lat, lon = get_lat_lon_of_request(company + ", Saarland")
+        except Exception:
+            lat, lon = None, None
+        data[i, 0] = lat
+        data[i, 1] = lon
+    coords_df = pd.DataFrame(data, columns=["latitude", "longitude"])
+    df = pd.merge(pd.DataFrame(train_labels, columns=["labels"]), coords_df, right_index=True, left_index=True)
+    df.to_csv(paths.MAP_CSV)
+    return df
 
 
 @st.cache_data
@@ -85,6 +114,42 @@ def compute_kpca(n_clusters, dimensions, train_embeddings):
     kpca = fit_kernel_pca(train_embeddings, n_components=dimensions)
     clustering = cluster_data(train_embeddings, kpca, n_clusters)
     return predict_cluster(train_embeddings, kpca, clustering)
+
+
+@st.cache_data
+def plot_map(clusters):
+    map_df = load_map_df()
+    hover_df = get_hover_data()
+    df = pd.merge(map_df, hover_df, right_index=True, left_index=True)
+    df["Cluster"] = [str(cluster) for cluster in clusters]
+    selected = df.dropna()
+    fig = px.scatter_mapbox(selected, lat="latitude", lon="longitude", color="Cluster", custom_data=selected,
+                            text="Company", zoom=9,
+                            category_orders={"Cluster": list(sorted(selected["Cluster"], key=lambda x: int(x)))},
+                            hover_name="Company", hover_data=["Industry", "Customer Base", "Market Positioning"],
+                            color_discrete_sequence=px.colors.qualitative.Light24)
+    fig.update_layout(mapbox_style='carto-darkmatter')
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.update_traces(textposition='top center',
+                      hovertemplate='<b>%{customdata[5]}</b><br>'
+                                    'Industry: %{customdata[6]} <br>'
+                                    'Products: %{customdata[7]} <br>'
+                                    'Customer base: %{customdata[8]} <br>'
+                                    'Market Position: %{customdata[9]} <br>'
+                                    'Revenue: %{customdata[10]}€')
+    fig.update_layout(
+        height=750,
+        hoverlabel=dict(
+            font_size=16
+        ),
+        margin=go.Margin(
+            l=0,
+            r=0,
+            b=0,
+            t=10
+        )
+    )
+    return fig
 
 
 @st.cache_data
