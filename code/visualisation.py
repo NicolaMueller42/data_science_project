@@ -180,6 +180,31 @@ def plot_map(clusters, plot_connections=False):
 
 
 @st.cache_data
+def add_similarity_heatmap(fig, distances):
+    map_df = load_map_df()
+    hover_df = get_hover_data()
+    df = pd.merge(map_df, hover_df, right_index=True, left_index=True)
+    # df["Cluster"] = [str(cluster) if cluster is not None else None for cluster in clusters]
+    df["Distances"] = (max(distances) - distances) / (max(distances))
+    selected = df.dropna()
+    map_fig = px.density_mapbox(selected, lat="latitude", lon="longitude", z="Distances", custom_data=selected,
+                                radius=50, opacity=0.5,
+                                mapbox_style="carto-darkmatter",
+                                color_continuous_scale=px.colors.sequential.Hot)
+    fig.add_traces(data=map_fig.data)
+    fig.update_layout(mapbox_style='carto-darkmatter')
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.update_traces(hovertemplate='<b>%{customdata[5]}</b><br>'
+                                    'Similarity: %{customdata[11]:.2%}<br>'
+                                    'Industry: %{customdata[6]} <br>'
+                                    'Products: %{customdata[7]} <br>'
+                                    'Customer base: %{customdata[8]} <br>'
+                                    'Market Position: %{customdata[9]} <br>'
+                                    'Revenue: %{customdata[10]}€')
+    return fig
+
+
+@st.cache_data
 def plot_2d(clusters, projected):
     str_cluster = [str(cluster) for cluster in clusters]
     df = pd.merge(
@@ -259,7 +284,7 @@ def plot_3d(clusters, projected):
                                     'Products: %{customdata[6]} <br>'
                                     'Customer base: %{customdata[7]} <br>'
                                     'Market Position: %{customdata[8]} <br>'
-                                    'Revenue: %{customdata[9]}€',)
+                                    'Revenue: %{customdata[9]}€', )
     fig.update_layout(
         height=750,
         hoverlabel=dict(

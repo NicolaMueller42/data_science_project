@@ -5,7 +5,7 @@ import pandas as pd
 import code.description_data as data
 import requests
 from code.visualisation import get_embeddings, compute_tsne, compute_kpca, \
-    plot_2d, plot_3d, plot_map, get_hover_data, add_industry_clusters, add_clusters
+    plot_2d, plot_3d, plot_map, get_hover_data, add_similarity_heatmap, add_clusters
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -15,6 +15,7 @@ st.set_page_config(layout="wide")
 
 def close_expander():
     st.session_state.expand_input = False
+    st.session_state.submit = True
 
 
 @st.cache_data
@@ -53,6 +54,8 @@ def load_map_df(labels):
 
 if "expand_input" not in st.session_state:
     st.session_state.expand_input = True
+if "submit" not in st.session_state:
+    st.session_state.submit = True
 with st.expander("Input", expanded=st.session_state.expand_input):
     with st.form("Search"):
         test_label = st.text_input("Enter company name:", placeholder="Your company")
@@ -70,8 +73,8 @@ with st.expander("Input", expanded=st.session_state.expand_input):
         method = st.radio("Select dimensionality reduction method", options=["t-SNE", "Kernel PCA"])
         n_clusters = st.slider("Select number of clusters", min_value=2, max_value=24, value=10)
         dimensions = st.radio("Select number of dimensions to use for clustering", options=[2, 3])
-        submit = st.form_submit_button("Submit", on_click=close_expander)
-if submit and test_description:
+        st.form_submit_button("Submit", on_click=close_expander)
+if st.session_state.submit and test_description:
     test_label = "Your company" if test_label is None else test_label
     clusters, projected = compute_clustering(test_description, embedding_type, method, n_clusters, dimensions)
     with st.expander("Competitors", expanded=True):
@@ -123,13 +126,24 @@ if submit and test_description:
             with plot:
                 st.plotly_chart(figure, use_container_width=True)
             with map_plot:
+                heatmap = st.checkbox("Overlay similarity heatmap")
                 selected = [cluster if cluster == clusters[-1] else None for cluster in clusters[:-1]]
                 map_fig = plot_map(selected, plot_connections=True)
-                map_fig.update_layout(height=400)
+                if heatmap:
+                    distances = []
+                    point_of_interest = projected[-1]
+                    for point in projected[:-1]:
+                        distances.append(np.sqrt(
+                            np.sum(
+                                [np.power((point_2 - point_1), 2)
+                                    for point_1, point_2 in zip(point, point_of_interest)])
+                        ))
+                    map_fig = add_similarity_heatmap(map_fig, distances)
+                map_fig.update_layout(height=390)
                 st.plotly_chart(map_fig)
         else:
             st.warning("Our clustering predicts that no companies in Saarland are very similar to yours based on your"
                        " given description."
                        " Try to lower the amount of clusters to see which cluster is the most similar.")
-elif submit and not test_description:
+elif st.session_state.submit and not test_description:
     st.warning("Description must not be empty or else your company cannot be clustered!")
