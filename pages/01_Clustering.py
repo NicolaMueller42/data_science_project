@@ -58,7 +58,7 @@ with selection_area:
                                        "Computation usually takes longer using this method.")
         method = st.radio("Select dimensionality reduction method", options=["t-SNE", "Kernel PCA"])
         n_clusters = st.slider("Select number of clusters", min_value=2, max_value=24, value=10)
-        features = st.multiselect("Select features", options=["Description", "Location", "Industry", "Products",
+        features = st.multiselect("Select features", options=["Description", "Industry", "Products",
                                                               "Customer Base", "Market Positioning", "Revenue"],
                                   default=["Description"])
         st.form_submit_button("Compute clustering")
