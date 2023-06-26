@@ -6,13 +6,16 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error
 from sklearn.decomposition import PCA, KernelPCA
 from code.description_data import train_descriptions
-from code.embeddings import get_description_embeddings, get_full_embeddings
+from code.embeddings import get_description_embeddings
 
-embeddings = get_full_embeddings(train_descriptions)
-def my_scorer(estimator, X, y=None):
-    X_reduced = estimator.transform(X)
-    X_preimage = estimator.inverse_transform(X_reduced)
-    return -1 * mean_squared_error(X, X_preimage)
+embeddings = get_description_embeddings(train_descriptions, embed_type="max")
+
+
+def my_scorer(estimator, x):
+    x_reduced = estimator.transform(x)
+    x_preimage = estimator.inverse_transform(x_reduced)
+    return -1 * mean_squared_error(x, x_preimage)
+
 
 param_grid = [{
     "gamma": np.linspace(0.03, 0.05, 10),

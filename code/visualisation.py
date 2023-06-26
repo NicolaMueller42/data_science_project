@@ -1,7 +1,6 @@
 from code.clustering_tsne import project_tsne, predict_clusters
 from code.clustering_kpca import predict_cluster, fit_kernel_pca, cluster_data
-from code.embeddings import get_description_embeddings
-from code.description_data import train_descriptions, train_labels
+from code.description_data import train_labels
 import numpy as np
 import streamlit as st
 import plotly.express as px
@@ -39,7 +38,8 @@ def compute_hull(points):
     # compute convex hull
     try:
         hull = ConvexHull(points)  # computation might not work if data points in a cluster have a very weird position
-    except:
+    except Exception as e:
+        print(e)
         return points[:, 0], points[:, 1]
     x_hull = np.append(points[hull.vertices, 0],
                        points[hull.vertices, 0][0])
@@ -160,12 +160,12 @@ def add_similarity_heatmap(fig, distances, max_distance, cluster, clusters):
                                     'Revenue: %{customdata[10]}€')
     map_fig.add_traces(data=fig.data)
     map_fig.update_traces(hovertemplate='<b>%{customdata[5]}</b><br>'
-                                    'Similarity: %{customdata[11]:.2%}<br>'
-                                    'Industry: %{customdata[6]} <br>'
-                                    'Products: %{customdata[7]} <br>'
-                                    'Customer base: %{customdata[8]} <br>'
-                                    'Market Position: %{customdata[9]} <br>'
-                                    'Revenue: %{customdata[10]}€')
+                                        'Similarity: %{customdata[11]:.2%}<br>'
+                                        'Industry: %{customdata[6]} <br>'
+                                        'Products: %{customdata[7]} <br>'
+                                        'Customer base: %{customdata[8]} <br>'
+                                        'Market Position: %{customdata[9]} <br>'
+                                        'Revenue: %{customdata[10]}€')
 
     return map_fig
 

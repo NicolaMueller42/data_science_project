@@ -11,31 +11,32 @@ from scipy import interpolate
 import matplotlib
 
 colors = matplotlib.colors.ListedColormap(
-        [
-            "rosybrown",
-            "darkred",
-            "tan",
-            "darkkhaki",
-            "forestgreen",
-            "teal",
-            "steelblue",
-            "rebeccapurple",
-            "magenta",
-            "crimson",
-            "silver",
-            "brown",
-            "orange",
-            "darkgoldenrod",
-            "olive",
-            "lime",
-            "aqua",
-            "royalblue",
-            "darkorchid",
-            "hotpink"
-        ]
-    ).colors
+    [
+        "rosybrown",
+        "darkred",
+        "tan",
+        "darkkhaki",
+        "forestgreen",
+        "teal",
+        "steelblue",
+        "rebeccapurple",
+        "magenta",
+        "crimson",
+        "silver",
+        "brown",
+        "orange",
+        "darkgoldenrod",
+        "olive",
+        "lime",
+        "aqua",
+        "royalblue",
+        "darkorchid",
+        "hotpink"
+    ]
+).colors
 
 colors = matplotlib.colors.ListedColormap(plt.cm.tab20.colors).colors
+
 
 # Prints the results of clustering
 def print_clusters(data_labels, clustering_labels):
@@ -51,11 +52,14 @@ def print_clusters(data_labels, clustering_labels):
         print(clusters[c_label])
         print("\n")
 
+
 # Fits an instance of t-SNE using given data
 def project_tsne(data, dimensions, perplexity, random_state=69):
-    projected_data = TSNE(n_components=dimensions, perplexity=perplexity, random_state=random_state).fit_transform(np.array(data))
+    projected_data = TSNE(n_components=dimensions, perplexity=perplexity, random_state=random_state).fit_transform(
+        np.array(data))
 
     return projected_data
+
 
 # Creates a dendrogram to decide the number of clusters
 def plot_dendrogram(model, **kwargs):
@@ -76,21 +80,21 @@ def plot_dendrogram(model, **kwargs):
 
     dendrogram(linkage_matrix, **kwargs)
 
+
 # Computes clusters
 def predict_clusters(projected_data, n_clusters):
     clustering = AgglomerativeClustering(n_clusters=n_clusters, linkage='ward').fit(projected_data)
-    #clustering = AgglomerativeClustering(n_clusters=None, linkage='complete', distance_threshold=0).fit(projected_data)
-    #plot_dendrogram(clustering, truncate_mode='level', p=3)
-    #plt.show()
     clustering_labels = clustering.labels_
 
     return clustering_labels, projected_data
+
 
 # Visualizes the results of clustering as 2D scatter plots
 def visualize_clustering(clusters, labels, projected, fontsize=5):
     fig = plt.figure(figsize=(15, 10))
     ax = fig.add_subplot()
-    ax.set_title("Agglomerative Clustering of Description Embeddings Projected into 2D Space Using t-SNE", fontsize=fontsize+10)
+    ax.set_title("Agglomerative Clustering of Description Embeddings Projected into 2D Space Using t-SNE",
+                 fontsize=fontsize + 10)
 
     # plot data points and names
     for i, txt in enumerate(labels):
@@ -129,8 +133,10 @@ def visualize_clustering(clusters, labels, projected, fontsize=5):
 
         # compute convex hull
         try:
-            hull = ConvexHull(points)  # computation might not work if data points in a cluster have a very weird position
-        except:
+            hull = ConvexHull(
+                points)  # computation might not work if data points in a cluster have a very weird position
+        except Exception as e:
+            print(e)
             # plot the label of the cluster
             offset = (np.max(projected[:, 1]) - np.min(projected[:, 1])) * 0.025
             ax.text(np.min(points[:, 0]), np.max(points[:, 1]) + offset, "Cluster " + str(cluster),
@@ -149,11 +155,10 @@ def visualize_clustering(clusters, labels, projected, fontsize=5):
         interp_x, interp_y = interpolate.splev(interp_d, spline)
         plt.fill(interp_x, interp_y, '--', c=colors[cluster], alpha=0.2)
 
-
         # plot the label of the cluster
         offset = (np.max(projected[:, 1]) - np.min(projected[:, 1])) * 0.025
-        ax.text(np.min(points[:, 0]), np.max(points[:, 1])+offset, "Cluster "+str(cluster), fontsize=fontsize+5, alpha=0.5, color=colors[cluster])
+        ax.text(np.min(points[:, 0]), np.max(points[:, 1]) + offset, "Cluster " + str(cluster), fontsize=fontsize + 5,
+                alpha=0.5, color=colors[cluster])
 
-    #plt.savefig("clustering_tsne.png", dpi=300, bbox_inches='tight', pad_inches=0.05)
+    # plt.savefig("clustering_tsne.png", dpi=300, bbox_inches='tight', pad_inches=0.05)
     plt.show(block=True)
-

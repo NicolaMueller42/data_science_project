@@ -12,7 +12,6 @@ assert len(train_labels) == len(train_descriptions), print(len(train_labels), le
 # Compute the clustering of the training data
 train_embeddings = get_description_embeddings(train_descriptions)
 n_clusters = int(np.floor(np.sqrt(len(train_descriptions)))) + 4
-n_clusters = 11
 pca = fit_kernel_pca(data=train_embeddings, random_state=42)
 clustering = cluster_data(data=train_embeddings, kpca=pca, n_clusters=n_clusters, random_state=42)
 train_clusters, train_projected = predict_cluster(data=train_embeddings, kpca=pca, clustering=clustering)
@@ -45,7 +44,8 @@ while True:
     test_clusters, test_projected = predict_cluster(data=test_embeddings, kpca=pca, clustering=clustering)
 
     print("\n")
-    print(f"Our analysis assigned {test_label} to the cluster {test_clusters[0]}, which contains the following companies (ordered according to similarity):")
+    print(f"Our analysis assigned {test_label} to the cluster {test_clusters[0]},"
+          f" which contains the following companies (ordered according to similarity):")
 
     labels_and_distances = []
     for company in clusters_dict[test_clusters[0]]:

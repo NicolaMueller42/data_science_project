@@ -39,7 +39,8 @@ def load_map_df():
         print(i, company)
         try:
             lat, lon = get_lat_lon_of_request(company + ", Saarland")
-        except Exception:
+        except Exception as e:
+            print(e)
             lat, lon = None, None
         data[i, 0] = lat
         data[i, 1] = lon

@@ -1,12 +1,5 @@
 import streamlit as st
 import numpy as np
-import requests
-import os
-
-import paths
-from code.description_data import train_labels
-import urllib
-import pandas as pd
 from code.data_util import get_embeddings, load_economic_df, load_map_df
 from code.visualisation import compute_tsne, compute_kpca, \
     plot_2d, plot_3d, plot_map, add_clusters
@@ -16,30 +9,32 @@ st.set_page_config(layout="wide")
 
 
 @st.cache_data
-def compute_clustering(embedding_type, features: list[str], method, n_clusters):
-    embedding_type = "max" if embedding_type == "Maximum of Features" else \
-        ("mean" if embedding_type == "Mean of Features" else embedding_type)
+def compute_clustering(embed_type, feature_list: list[str], dim_reduct_method, num_clusters):
+    embed_type = "max" if embed_type == "Maximum of Features" else \
+        ("mean" if embed_type == "Mean of Features" else embed_type)
     economic_df = load_economic_df()
     map_df = load_map_df()
     input_features = []
-    if "Description" in features:
-        embeddings = get_embeddings(embedding_type)
+    if "Description" in feature_list:
+        embeddings = get_embeddings(embed_type)
         input_features += list(np.moveaxis(np.array(embeddings), 0, -1))
-        features.remove("Description")
-    if "Location" in features:
+        feature_list.remove("Description")
+    if "Location" in feature_list:
         input_features.append(list(map_df["latitude"]))
         input_features.append(list(map_df["longitude"]))
-        features.remove("Location")
-    for feature in features:
-        embeddings = get_embeddings(embedding_type, data_to_embed=list(economic_df[feature]))
+        feature_list.remove("Location")
+    for feature in feature_list:
+        embeddings = get_embeddings(embed_type, data_to_embed=list(economic_df[feature]))
         input_features += list(np.moveaxis(np.array(embeddings), 0, -1))
-    input = np.moveaxis(np.array(input_features), 0, -1)
-    if method == "t-SNE":
-        clusters_2d, projected_2d = compute_tsne(n_clusters, 2, input)
-        clusters_3d, projected_3d = compute_tsne(n_clusters, 3, input)
-    elif method == "Kernel PCA":
-        clusters_2d, projected_2d = compute_kpca(n_clusters, 2, input)
-        clusters_3d, projected_3d = compute_kpca(n_clusters, 3, input)
+    input_features = np.moveaxis(np.array(input_features), 0, -1)
+    if dim_reduct_method == "t-SNE":
+        clusters_2d, projected_2d = compute_tsne(num_clusters, 2, input_features)
+        clusters_3d, projected_3d = compute_tsne(num_clusters, 3, input_features)
+    elif dim_reduct_method == "Kernel PCA":
+        clusters_2d, projected_2d = compute_kpca(num_clusters, 2, input_features)
+        clusters_3d, projected_3d = compute_kpca(num_clusters, 3, input_features)
+    else:
+        raise ValueError("Method not supported!")
     return {"2d": (clusters_2d, projected_2d),
             "3d": (clusters_3d, projected_3d)}
 
