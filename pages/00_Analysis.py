@@ -178,7 +178,14 @@ if st.session_state.submit:
                                 [np.power((point_2 - point_1), 2)
                                     for point_1, point_2 in zip(point, point_of_interest)])
                         ))
-                    map_fig = add_similarity_heatmap(map_fig, distances, clusters[-1], clusters[:-1])
+                    min_points = np.min(projected, axis=1)
+                    max_points = np.max(projected, axis=1)
+                    spread = np.sqrt(np.sum(
+                                [np.power((point_2 - point_1), 2)
+                                    for point_1, point_2 in zip(min_points, max_points)])
+                        )
+                    max_distance = spread / 5
+                    map_fig = add_similarity_heatmap(map_fig, distances, max_distance, clusters[-1], clusters[:-1])
                 map_fig.update_layout(height=390)
                 st.plotly_chart(map_fig)
         else:

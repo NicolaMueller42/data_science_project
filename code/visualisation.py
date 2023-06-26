@@ -136,12 +136,12 @@ def plot_map(clusters, plot_connections=False):
 
 
 @st.cache_data
-def add_similarity_heatmap(fig, distances, cluster, clusters):
+def add_similarity_heatmap(fig, distances, max_distance, cluster, clusters):
     map_df = load_map_df()
     hover_df = load_economic_df()
     df = pd.merge(map_df, hover_df, right_index=True, left_index=True)
     # df["Cluster"] = [str(cluster) if cluster is not None else None for cluster in clusters]
-    df["Distances"] = [max(((50 - distance) / 50), 0) for distance in distances]
+    df["Distances"] = [max(((max_distance - distance) / max_distance), 0) for distance in distances]
     selected = df.dropna()
     map_fig = px.density_mapbox(selected, lat="latitude", lon="longitude", z="Distances", custom_data=selected,
                                 radius=50, opacity=0.5,
