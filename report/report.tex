@@ -104,7 +104,7 @@ The remaining parts of this paper are structured as follows: In section \MakeUpp
     \item Mention that we collected traditional economic data?
 \end{itemize}
 \color{black}
-\nm{Related work for business stuff is still missing! Also adjust motivation for embeddings?}
+\nm{Related work for business stuff is still missing!}
 
 In natural language processing (NLP), translating text data to machine-processable representations is a fundamental challenge for numerous tasks, such as machine translation~\cite{qi2018and}, sentiment analysis~\cite{rezaeinia2019sentiment}, and information retrieval~\cite{ye2016word}, due to the complexity and variability of natural language. A popular approach for representing text data is the utilization of so-called \emph{embeddings}: vectorized representations of text with the property that vectors of text data with similar semantic and syntactic properties will have a smaller distance to vectors of text data with different properties. Thus, embeddings enable quantifying semantic and syntactic similarity in terms of distances in a low-dimensional, dense vector space, making them ideal for applying clustering to our sparse dataset of high-dimensional company descriptions.  
 
@@ -180,7 +180,7 @@ To choose the number of clusters for $K$-Means, we started with $K = \sqrt{N}$, 
 Given that we have no ground truth labels, we will evaluate the results of our clustering process based on our investigation of Saarland's economy in \MakeUppercase{\romannumeral 2}.
 
 \section{Results}
-\nm{Move current clustering results to appendix and rewrite section for the new results, keep location recommendation results as they are?}
+\nm{Rewrite clustering section for the new results, keep location recommendation results as they are?}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{figures/clustering_results.png}
@@ -188,7 +188,8 @@ Given that we have no ground truth labels, we will evaluate the results of our c
     \label{fig:t-sne-agglomerative}
 \end{figure}
 
-In this section, we will investigate the results of the best-performing configuration of our clustering and location recommendation system. These results were obtained using the following configuration: the description embeddings were computed using max pooling, the embeddings were projected into 2D space using t-SNE, and the clustering was achieved using Agglomerative clustering. We found that this configuration yields the most sensible predictions of market segments and location recommendations. Figure \hyperref[fig:t-sne-agglomerative]{$2$} displays the resulting clustered data points, and the plots of the other configurations can be found in the appendix.
+In this section, we will investigate the results of the best-performing configuration of our clustering and location recommendation system. These results were obtained using the following configuration: the description embeddings were computed using max pooling, the embeddings were projected into 2D space using t-SNE, and the clustering was achieved using Agglomerative clustering. We also used the companies' industry as an additional feature.
+ We found that this configuration yields the most sensible predictions of market segments and location recommendations. Figure \ref{fig:t-sne-agglomerative} displays the resulting clustered data points.
 
 \subsection{Clustering}
 In the following, we analyze each of the found clusters and interpret them with respect to potential market segments:
@@ -251,7 +252,7 @@ Another reason for invalid cluster assignments could be that our utilized senten
 \bibliography{bibliography}
 
 \appendix
-\nm{Upload all LaTeX files to overleaf when its done since they want a link! Update readme in repo!}
+\nm{Upload all \LaTeX{} files to overleaf when its done since they want a link! Update readme in repo!}
 \begin{itemize}
 	\item \textbf{Link to Code}: Provide the link to your code repository. You can use any service to host your code (Github, gdrive etc.). The code should be running, accessible and all of your work must be reproducible. In case your code is not accessible or not in a working state, relevant number of points will be deducted.   
 	\item \textbf{Link to Overleaf}: Add a link to the Overleaf project which contains all of the LaTex related files for this report.
