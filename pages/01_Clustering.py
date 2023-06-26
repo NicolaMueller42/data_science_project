@@ -67,8 +67,8 @@ with selection_area:
     fig_3d = plot_3d(plot_data_dict["3d"][0], plot_data_dict["3d"][1])
     dimensions = st.radio("Select number of dimensions to display", options=["2d", "3d"])
 with plot_area:
+    compare_mode = st.radio("Plot Style", options=["Cluster Plot", "Map", "Both"], horizontal=True)
     if dimensions == "2d":
-        compare_mode = st.radio("Plot Style", options=["Cluster Plot", "Map", "Both"], horizontal=True)
         if compare_mode == "Map":
             new_fig = plot_map(clusters=plot_data_dict["2d"][0])
             st.plotly_chart(new_fig, use_container_width=True)
@@ -86,6 +86,21 @@ with plot_area:
                 st.plotly_chart(new_fig, use_container_width=True)
                 st.warning("Some companies might be missing on this map!")
     else:
+        if compare_mode == "Map":
+            new_fig = plot_map(clusters=plot_data_dict["3d"][0])
+            st.plotly_chart(new_fig, use_container_width=True)
+            st.warning("Some companies might be missing on this map!")
+        elif compare_mode == "Cluster Plot":
+            new_fig = add_clusters(fig_2d, plot_data_dict["2d"][0], plot_data_dict["2d"][1])
+            st.plotly_chart(new_fig, use_container_width=True)
+        else:
+            plot, map_col = st.columns([1, 1])
+            with plot:
+                st.plotly_chart(fig_3d, use_container_width=True)
+            with map_col:
+                new_fig = plot_map(clusters=plot_data_dict["3d"][0])
+                st.plotly_chart(new_fig, use_container_width=True)
+                st.warning("Some companies might be missing on this map!")
         st.plotly_chart(fig_3d, use_container_width=True)
 
 
