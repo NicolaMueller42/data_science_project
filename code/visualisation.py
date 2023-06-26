@@ -149,9 +149,9 @@ def add_similarity_heatmap(fig, distances):
                                 color_continuous_scale=px.colors.sequential.Hot,
                                 range_color=[0.0, 1.0])
     fig.add_trace(map_fig.data[0])
-    fig.update_layout(mapbox_style='carto-darkmatter')
-    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-    fig.update_traces(hovertemplate='<b>%{customdata[5]}</b><br>'
+    map_fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    map_fig.add_traces(data=fig.data)
+    map_fig.update_traces(hovertemplate='<b>%{customdata[5]}</b><br>'
                                     'Similarity: %{customdata[11]:.2%}<br>'
                                     'Industry: %{customdata[6]} <br>'
                                     'Products: %{customdata[7]} <br>'
