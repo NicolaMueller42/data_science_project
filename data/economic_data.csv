@@ -7,7 +7,7 @@ Nr,Company,Industry,Products,Customer Base,Market Positioning,Revenue
 6,Ford,Automotive,"Cars, trucks, SUVs, and automotive components","Consumers, fleet owners, businesses",Major automotive manufacturer,146440000000
 7,Schaeffler,Automotive,Automotive and industrial components,"Automotive, industrial customers",Leading global automotive and industrial supplier,15800000000
 8,Fresenius,Healthcare,"dialysis machines, dialyzers and related disposables","Hospitals, healthcare providers",leading provider of products and services- renal diseases,19400000000
-9,Wagner,Manufacturing,fire protection system,"Industrial, automotive, construction",Leading provider of early fire detection and fire prevention,120000000
+9,Wagner Tiefkühlprodukte Gmbh,Food manufacturer,Frozen food,"Consumers, both retail and foodservice sectors","Established, Well-known, Quality Frozen Food",120000000
 10,Villeroy & Boch,Home Products,"Tableware, bathroom ceramics, kitchen products","Consumers, hospitality industry",leading expertise of ceramics and design,995000000
 11,Michelin,Automotive,Tires and mobility solutions,"Automotive, transportation",Leading tire manufacturer and mobility provider,28590000000
 12,ThyssenKrupp,Industrial,"Steel, industrial components, materials services, Automotive ",Various industries,provider of innovative and reliable solutions - mutilpe industries,41000000000
@@ -30,7 +30,7 @@ electronics and cooling technology solutions",1300000000
 28,Karlsberg,Beverage,Beer and alcoholic beverages,"Consumers, retailers",Well-known brewery and beverage manufacturer,120000000
 29,Globus,Retail,"Hypermarkets, supermarkets, retail operations","Consumers, businesses",Major retail and grocery chain,8820000000
 30,Caritas,Non-profit,"Social services, healthcare, welfare","Vulnerable individuals, communities",International network of charitable organizations,275161453
-31,Uni Saar,Education,Higher education institution,"Students, researchers",Renowned university,390000000
+31,Uni Saar,Research,Higher education institution,"Students, researchers",Renowned university,390000000
 32,Welocalize,Translation,Language and localization services,"Businesses, organizations",Global provider of translation and localization,275880000
 33,Möbel Martin,Retail,Furniture and home decor,"Consumers, interior designers",Well-established furniture retailer,350000000
 34,IKK Südwest,Insurance,Health insurance and services,"Individuals, businesses",Regional health insurance provider,2176400000
@@ -49,4 +49,4 @@ electronics and cooling technology solutions",1300000000
 47,Ludwig Schokolade,Food,Chocolates and confectionery products,"Consumers, retailers",Traditional chocolate and confectionery manufacturer,841300000
 48,MAT Foundries,Manufacturing,Iron and steel castings,"Automotive, industrial customers",Leading foundry for iron and steel castings,230000000
 49,Adient,Automotive,Automotive seating systems and components,Automotive manufacturers,Leading automotive seating supplier,733450000
-50,Schröder,Manufacturing,Sheet metal working machines and equipment,"Industrial, manufacturing",Global provider of sheet metal working solutions,24000000
+50,Schröder,Food,Meat,"Food, Consumers",Local provider of meat ,24000000

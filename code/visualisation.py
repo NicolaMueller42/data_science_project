@@ -7,53 +7,9 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-import paths
-import requests
-import urllib
-import os
-from paths import ECO_CSV
-from scipy.cluster.hierarchy import dendrogram
 from scipy.spatial import ConvexHull
 from scipy import interpolate
-
-
-def get_lat_lon_of_request(search_string):
-    url = 'https://nominatim.openstreetmap.org/search/' + urllib.parse.quote(search_string) + '?format=json'
-    response = requests.get(url).json()
-    return response[0]["lat"], response[0]["lon"]
-
-
-@st.cache_data
-def load_map_df():
-    if os.path.exists(paths.MAP_CSV):
-        return pd.read_csv(paths.MAP_CSV)
-    data = np.zeros((len(train_labels), 2))
-    for i, company in enumerate(train_labels):
-        print(i, company)
-        try:
-            lat, lon = get_lat_lon_of_request(company + ", Saarland")
-        except Exception:
-            lat, lon = None, None
-        data[i, 0] = lat
-        data[i, 1] = lon
-    coords_df = pd.DataFrame(data, columns=["latitude", "longitude"])
-    df = pd.merge(pd.DataFrame(train_labels, columns=["labels"]), coords_df, right_index=True, left_index=True)
-    df.to_csv(paths.MAP_CSV)
-    return df
-
-
-@st.cache_data
-def get_hover_data():
-    df = pd.read_csv(ECO_CSV)
-    return df
-
-
-@st.cache_data
-def get_embeddings(embedding_type="max", test_description=None):
-    if test_description:
-        return get_description_embeddings(train_descriptions + [test_description], embed_type=embedding_type)
-    else:
-        return get_description_embeddings(train_descriptions, embed_type=embedding_type)
+from code.data_util import load_map_df, load_economic_df
 
 
 @st.cache_data
@@ -119,7 +75,7 @@ def compute_kpca(n_clusters, dimensions, train_embeddings):
 @st.cache_data
 def plot_map(clusters, plot_connections=False):
     map_df = load_map_df()
-    hover_df = get_hover_data()
+    hover_df = load_economic_df()
     df = pd.merge(map_df, hover_df, right_index=True, left_index=True)
     df["Cluster"] = [str(cluster) if cluster is not None else None for cluster in clusters]
     selected = df.dropna()
@@ -182,7 +138,7 @@ def plot_map(clusters, plot_connections=False):
 @st.cache_data
 def add_similarity_heatmap(fig, distances):
     map_df = load_map_df()
-    hover_df = get_hover_data()
+    hover_df = load_economic_df()
     df = pd.merge(map_df, hover_df, right_index=True, left_index=True)
     # df["Cluster"] = [str(cluster) if cluster is not None else None for cluster in clusters]
     df["Distances"] = (max(distances) - distances) / (max(distances))
@@ -190,8 +146,9 @@ def add_similarity_heatmap(fig, distances):
     map_fig = px.density_mapbox(selected, lat="latitude", lon="longitude", z="Distances", custom_data=selected,
                                 radius=50, opacity=0.5,
                                 mapbox_style="carto-darkmatter",
-                                color_continuous_scale=px.colors.sequential.Hot)
-    fig.add_traces(data=map_fig.data)
+                                color_continuous_scale=px.colors.sequential.Hot,
+                                range_color=[0.0, 1.0])
+    fig.add_trace(map_fig.data[0])
     fig.update_layout(mapbox_style='carto-darkmatter')
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     fig.update_traces(hovertemplate='<b>%{customdata[5]}</b><br>'
@@ -201,7 +158,7 @@ def add_similarity_heatmap(fig, distances):
                                     'Customer base: %{customdata[8]} <br>'
                                     'Market Position: %{customdata[9]} <br>'
                                     'Revenue: %{customdata[10]}€')
-    return fig
+    return map_fig
 
 
 @st.cache_data
@@ -209,7 +166,7 @@ def plot_2d(clusters, projected):
     str_cluster = [str(cluster) for cluster in clusters]
     df = pd.merge(
         pd.DataFrame(projected, columns=["x", "y"]),
-        get_hover_data(),
+        load_economic_df(),
         right_index=True, left_index=True
     )
     fig = px.scatter(df,
@@ -257,7 +214,7 @@ def plot_3d(clusters, projected):
     str_cluster = [str(cluster) for cluster in clusters]
     df = pd.merge(
         pd.DataFrame(projected),
-        get_hover_data(),
+        load_economic_df(),
         right_index=True, left_index=True
     )
     fig = px.scatter_3d(df,
@@ -355,7 +312,7 @@ def add_clusters(fig, clusters, projected):
 def add_industry_clusters(fig, projected):
     df = pd.merge(
         pd.DataFrame(projected),
-        get_hover_data(),
+        load_economic_df(),
         right_index=True, left_index=True
     )
     traces = []

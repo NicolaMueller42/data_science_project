@@ -4,8 +4,9 @@ import numpy as np
 import pandas as pd
 import code.description_data as data
 import requests
-from code.visualisation import get_embeddings, compute_tsne, compute_kpca, \
-    plot_2d, plot_3d, plot_map, get_hover_data, add_similarity_heatmap, add_clusters
+from code.visualisation import compute_tsne, compute_kpca, \
+    plot_2d, plot_3d, plot_map, load_economic_df, add_similarity_heatmap, add_clusters
+from code.data_util import get_embeddings
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -19,14 +20,26 @@ def close_expander():
 
 
 @st.cache_data
-def compute_clustering(test_description, embedding_type, method, n_clusters, dimensions):
+def compute_clustering(test_features, embedding_type, features, method, n_clusters, dimensions):
     embedding_type = "max" if embedding_type == "Maximum of Features" else \
         ("mean" if embedding_type == "Mean of Features" else embedding_type)
-    embeddings = get_embeddings(embedding_type, test_description)
+    economic_df = load_economic_df()
+    input_features = []
+    if "Description" in features:
+        embeddings = get_embeddings(embedding_type,
+                                    test_feature=test_features["Description"])
+        input_features += list(np.moveaxis(np.array(embeddings), 0, -1))
+        features.remove("Description")
+    for feature in features:
+        embeddings = get_embeddings(embedding_type,
+                                    test_feature=test_features[feature],
+                                    data_to_embed=list(economic_df[feature]))
+        input_features += list(np.moveaxis(np.array(embeddings), 0, -1))
+    input = np.moveaxis(np.array(input_features), 0, -1)
     if method == "t-SNE":
-        clusters, projected = compute_tsne(n_clusters, dimensions, embeddings)
+        clusters, projected = compute_tsne(n_clusters, dimensions, input)
     elif method == "Kernel PCA":
-        clusters, projected = compute_kpca(n_clusters, dimensions, embeddings)
+        clusters, projected = compute_kpca(n_clusters, dimensions, input)
     return clusters, projected
 
 
@@ -55,30 +68,58 @@ def load_map_df(labels):
 if "expand_input" not in st.session_state:
     st.session_state.expand_input = True
 if "submit" not in st.session_state:
-    st.session_state.submit = True
-with st.expander("Input", expanded=st.session_state.expand_input):
-    with st.form("Search"):
-        test_label = st.text_input("Enter company name:", placeholder="Your company")
-        test_description = st.text_input("Enter your company description:", placeholder="Your company description")
-        embedding_type = st.radio("Select embedding",
-                                  options=["Maximum of Features", "Mean of Features", "Concatenated Features"],
-                                  help="Select how text data will be embedded. "
-                                       "Maximum of Features: Takes the maximum of feature embeddings "
-                                       "across sentences in the description.\n"
-                                       "Mean of Features: Takes the mean of feature embeddings "
-                                       "across sentences in the description.\n"
-                                       "Concatenated Features: Concatenates all features into a large input feature. "
-                                       "Computation usually takes longer using this method."
-                                  )
-        method = st.radio("Select dimensionality reduction method", options=["t-SNE", "Kernel PCA"])
-        n_clusters = st.slider("Select number of clusters", min_value=2, max_value=24, value=10)
-        dimensions = st.radio("Select number of dimensions to use for clustering", options=[2, 3])
-        st.form_submit_button("Submit", on_click=close_expander)
-if st.session_state.submit and test_description:
+    st.session_state.submit = False
+
+with st.form("Search"):
+    with st.expander("Company details", expanded=st.session_state.expand_input):
+        text, other = st.columns([1, 1])
+        test_df = {}
+        with text:
+            test_label = st.text_input("Enter company name:",
+                                       placeholder="Your company")
+            test_df["Description"] = st.text_area("Enter your company description:",
+                                            placeholder="Your company description",
+                                            height=305)
+        with other:
+            eco_cols = load_economic_df()
+            test_df["Industry"] = st.text_input("Industry branch",
+                                          placeholder="E.g. Consulting, Manufacturing, Steel production")
+            test_df["Products"] = st.text_input("Product",
+                                         placeholder="E.g. Food, Wheels, Steel")
+            test_df["Customer Base"] = st.text_input("Targeted customer base",
+                                               placeholder="E.g. Consumers, Families, Other companies")
+            test_df["Market Positioning"] = st.text_input("Current Market Position",
+                                                 placeholder="E.g. Start-Up, Local business, Global leader")
+            test_df["Revenue"] = st.text_input("Current Revenue",
+                                         placeholder="E.g. 0€, 1 million $")
+    with st.expander("Parameters for Clustering", expanded=st.session_state.expand_input):
+        params, feat_select = st.columns([1, 1])
+        with params:
+            method = st.radio("Select dimensionality reduction method", options=["t-SNE", "Kernel PCA"])
+            n_clusters = st.slider("Select number of clusters", min_value=2, max_value=24, value=10)
+            dimensions = st.radio("Select number of dimensions to use for clustering", options=[2, 3], horizontal=True)
+        with feat_select:
+            embedding_type = st.radio("Select embedding",
+                                      options=["Maximum of Features", "Mean of Features", "Concatenated Features"],
+                                      help="Select how text data will be embedded. "
+                                           "Maximum of Features: Takes the maximum of feature embeddings "
+                                           "across sentences in the description.\n"
+                                           "Mean of Features: Takes the mean of feature embeddings "
+                                           "across sentences in the description.\n"
+                                           "Concatenated Features: Concatenates all features into a large input feature. "
+                                           "Computation usually takes longer using this method."
+                                      )
+            features = st.multiselect("Select features", options=["Description", "Industry", "Products",
+                                                                  "Customer Base", "Market Positioning", "Revenue"],
+                                      default=["Description"])
+    st.form_submit_button("Submit", on_click=close_expander, use_container_width=True, type="primary")
+if st.session_state.submit:
     test_label = "Your company" if test_label is None else test_label
-    clusters, projected = compute_clustering(test_description, embedding_type, method, n_clusters, dimensions)
+    clusters, projected = compute_clustering(test_features=test_df, features=features,
+                                             embedding_type=embedding_type,
+                                             method=method, n_clusters=n_clusters, dimensions=dimensions)
     with st.expander("Competitors", expanded=True):
-        df = get_hover_data()
+        df = load_economic_df()
         competitors = df[clusters[:-1] == clusters[-1]]
         if not competitors.empty:
             st.write(f"Your competitors are:")
@@ -145,5 +186,3 @@ if st.session_state.submit and test_description:
             st.warning("Our clustering predicts that no companies in Saarland are very similar to yours based on your"
                        " given description."
                        " Try to lower the amount of clusters to see which cluster is the most similar.")
-elif st.session_state.submit and not test_description:
-    st.warning("Description must not be empty or else your company cannot be clustered!")
