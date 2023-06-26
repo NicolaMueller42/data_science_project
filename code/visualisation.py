@@ -136,12 +136,12 @@ def plot_map(clusters, plot_connections=False):
 
 
 @st.cache_data
-def add_similarity_heatmap(fig, distances):
+def add_similarity_heatmap(fig, distances, cluster, clusters):
     map_df = load_map_df()
     hover_df = load_economic_df()
     df = pd.merge(map_df, hover_df, right_index=True, left_index=True)
     # df["Cluster"] = [str(cluster) if cluster is not None else None for cluster in clusters]
-    df["Distances"] = (max(distances) - distances) / (max(distances))
+    df["Distances"] = [max(((50 - distance) / 50), 0) for distance in distances]
     selected = df.dropna()
     map_fig = px.density_mapbox(selected, lat="latitude", lon="longitude", z="Distances", custom_data=selected,
                                 radius=50, opacity=0.5,
@@ -150,6 +150,14 @@ def add_similarity_heatmap(fig, distances):
                                 range_color=[0.0, 1.0],
                                 labels={"Distances": "Similarity"})
     map_fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.update_traces(customdata=selected[clusters == cluster])
+    fig.update_traces(hovertemplate='<b>%{customdata[5]}</b><br>'
+                                    'Similarity: %{customdata[11]:.2%}<br>'
+                                    'Industry: %{customdata[6]} <br>'
+                                    'Products: %{customdata[7]} <br>'
+                                    'Customer base: %{customdata[8]} <br>'
+                                    'Market Position: %{customdata[9]} <br>'
+                                    'Revenue: %{customdata[10]}€')
     map_fig.add_traces(data=fig.data)
     map_fig.update_traces(hovertemplate='<b>%{customdata[5]}</b><br>'
                                     'Similarity: %{customdata[11]:.2%}<br>'
@@ -158,6 +166,7 @@ def add_similarity_heatmap(fig, distances):
                                     'Customer base: %{customdata[8]} <br>'
                                     'Market Position: %{customdata[9]} <br>'
                                     'Revenue: %{customdata[10]}€')
+
     return map_fig
 
 

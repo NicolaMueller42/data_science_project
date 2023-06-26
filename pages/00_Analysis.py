@@ -166,7 +166,7 @@ if st.session_state.submit:
             with plot:
                 st.plotly_chart(figure, use_container_width=True)
             with map_plot:
-                heatmap = st.checkbox("Overlay similarity heatmap")
+                heatmap = st.checkbox("Overlay similarity heatmap", value=True)
                 selected = [cluster if cluster == clusters[-1] else None for cluster in clusters[:-1]]
                 map_fig = plot_map(selected, plot_connections=True)
                 if heatmap:
@@ -178,7 +178,7 @@ if st.session_state.submit:
                                 [np.power((point_2 - point_1), 2)
                                     for point_1, point_2 in zip(point, point_of_interest)])
                         ))
-                    map_fig = add_similarity_heatmap(map_fig, distances)
+                    map_fig = add_similarity_heatmap(map_fig, distances, clusters[-1], clusters[:-1])
                 map_fig.update_layout(height=390)
                 st.plotly_chart(map_fig)
         else:
