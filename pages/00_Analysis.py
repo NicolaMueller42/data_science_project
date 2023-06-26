@@ -154,8 +154,7 @@ if st.session_state.submit:
                     z=[projected[-1, 2]],
                     marker=dict(
                         color=px.colors.qualitative.Light24[clusters[-1]],
-                        size=20,
-                        symbol="square",),
+                        size=15,),
                     mode="markers+text",
                     hoverinfo="none",
                     text=test_label,
