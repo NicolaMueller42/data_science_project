@@ -23,6 +23,11 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
+
+% Multi-column list
+\usepackage{multicol}
+
+
 \begin{document}
 
 \title{Towards Language Model-based Identification of Market Segments and Fostering of Business Clusters}
@@ -169,7 +174,7 @@ Our user-interface offers a dedicated tab for location recommendations. In figur
 \end{figure}
 
 \section{Experiments}
-To build our dataset of company descriptions, we manually extracted the descriptions of $50$ of the largest companies in Saarland. When a description was only available in German, we translated it to English using the online translator DeepL. A list of all companies in our dataset can be found in the appendix \ref{sec:appendix-a}. We conducted the data collection manually since company websites are generally structured very differently, making it complicated to extract such information automatically. Thus, building a scraping tool was out of this project's scope. To test our location recommendation feature, we created company descriptions using GPT-4.
+To build our dataset of company descriptions, we manually extracted the descriptions of $50$ of the largest companies in Saarland. When a description was only available in German, we translated it to English using the online translator DeepL. A list of all companies in our dataset can be found in the appendix \ref{sec:appendix-companies}. We conducted the data collection manually since company websites are generally structured very differently, making it complicated to extract such information automatically. Thus, building a scraping tool was out of this project's scope. To test our location recommendation feature, we created company descriptions using GPT-4.
 To test the impact of providing additional features to the clustering pipeline, we also gathered the features industry, products, customer base, market positioning, and revenue for each company.
 
 We utilize the popular pre-trained sentence transformer "all-MiniLM-L6-v2" from the HuggingFace hub to compute sentence embeddings for each description. An embedding for the full description is then attained using our concatenation, average, or max pooling approach. When using additional features, we compute embeddings for each feature and combine them with the description embedding in the same way the individual sentence embeddings were combined.
@@ -251,6 +256,7 @@ Another reason for invalid cluster assignments could be that our utilized senten
 \bibliographystyle{IEEEtran}
 \bibliography{bibliography}
 
+\newpage
 \appendix
 \nm{Upload all \LaTeX{} files to overleaf when its done since they want a link! Update readme in repo!}
 \begin{itemize}
@@ -259,10 +265,20 @@ Another reason for invalid cluster assignments could be that our utilized senten
 	\item \textbf{Additional Figures}: Add any and all additional figures produced during you work with relevant explanations in the appendix.
 \end{itemize}
 
+\subsection{Additional Clustering Results}
+
+
+\subsection{Link to Code}
+\url{https://github.com/NicolaMueller42/data_science_project}
+
+\subsection{Link to Overleaf}
+
+
 \subsection{Companies in our Dataset}
-\label{sec:appendix-a}
+\label{sec:appendix-companies}
+
 We list the $50$ Saarland companies in our dataset:
-\begin{itemize}
+\begin{multicols}{2} \begin{itemize}
 	\item ZF
 	\item Saarstahl
 	\item Dillinger
@@ -313,14 +329,7 @@ We list the $50$ Saarland companies in our dataset:
 	\item MAT Foundries
 	\item Adient
 	\item Schröder
-\end{itemize}
+\end{itemize}\end{multicols}
 
-\subsection{Additional Clustering Results}
-
-
-\subsection{Link to Code}
-\url{https://github.com/NicolaMueller42/data_science_project}
-
-\subsection{Link to Overleaf}
 
 \end{document}

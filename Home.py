@@ -35,8 +35,8 @@ with text:
         
     st.markdown("Our multidisciplinary team consists of five highly skilled professionals, blending expertise "
                 "from diverse "
-                "backgrounds. Two members hold a Bachelor of Science in Data Science and AI, possessing a deep"
-                " understanding of cutting-edge AI techniques and models. Another member brings a Bachelor of "
+                "backgrounds. One member holds a Bachelor of Science in Data Science and AI, possessing a deep"
+                " understanding of cutting-edge AI techniques and models. One member brings a Bachelor of "
                 "Science in Computer Science, ensuring robust implementation and system optimization. "
                 "Finally, our two team members with Bachelor of Science degrees in Economics bring valuable insights "
                 "into market dynamics and business strategy.")

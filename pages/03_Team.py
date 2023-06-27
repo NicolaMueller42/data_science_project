@@ -16,7 +16,7 @@ col3, col4 = st.columns([1, 1])
 with col3:
     st.image(placeholder)
     st.subheader("Paul Eichler")
-    st.write("Bachelor of Science - Data Science and Artificial Intelligence")
+    st.write("Computer Science")
 with col4:
     st.image(placeholder)
     st.subheader("Tobias Recktenwald")
