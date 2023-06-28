@@ -57,10 +57,6 @@ can use in your own write-up, if you want to. We explain some important points r
 
 
 \section{Introduction}
-\color{red} 
-I need the business guys to check the following paragraph!
-\color{black}
-
 Identifying market segments in regional economies is crucial for effective marketing strategies and making well-informed business decisions. Further, combining geographical data of companies' locations with information on their corresponding market segments allows for detecting business clusters, which are local concentrations of businesses, manufacturers, suppliers, and institutions from the same field. This geographic proximity of related businesses enables efficient cooperation and knowledge transfer, which has been shown to significantly increase the productivity of all businesses within the cluster (citation). Thus, establishing or further developing business clusters is of high interest to companies and local governments.
 
 \pe{I find the claims made in this paragraph to be to not backed by evidence. While I have no economic background, I was able to source some existing literature, e.g. \href{http://biblioteca.fundacionicbc.edu.ar/images/d/de/Clusters_1.pdf}{1}, \href{https://onlinelibrary.wiley.com/doi/full/10.1111/j.1536-7150.2011.00819.x}{2},
@@ -200,27 +196,27 @@ In this section, we will investigate the results of the best-performing configur
 \label{sec:clustering-results}
 In the following, we analyze each of the found clusters and interpret them with respect to potential market segments:
 \begin{itemize}
-    \item \textit{Cluster 0 (red)}: This cluster consists of automotive manufacturers and suppliers, such as Ford and Michelin. Hence, we follow that this cluster represents the automotive industry market segment.
-
-    \item \textit{Cluster 1 (light green)}: The steel industry companies MAT Foundries, ThyssenKrupp, and Meiser are part of this cluster. Further cluster members are companies like Hörmann and HYDAC, which also offer products manufactured from steel. Accordingly, we assign this cluster to the steel products market segment. Note that the food manufacturer Wagner can be considered misclassified, as it should be contained in Cluster 10.
-
-    \item \textit{Cluster 2 (dark blue)}: We attribute this cluster to the healthcare market segment since it contains the medicine manufacturers Dr. Theiss and URSAPARM, Fresenius which produces dialysis machines, and Unimed which provides accounting services for hospitals. Note that the IT consulting firm Scheer can be considered misclassified and should be added to Cluster 3.
-
-    \item \textit{Cluster 3 (beige)}: This cluster contains the IT companies SAP, ORBIS, eurodata, IAS Software, and Welcoalize, so it represents IT products and IT consulting market segment. Although the cluster member Bosch is not an IT company, it also offers software products, so we do not consider it misclassified.
-
-    \item \textit{Cluster 4 (purple)}: This cluster consists of the companies Globus, Möbel Martin, and Villeroy\&Boch, which offer very different products but are all large retailers. Hence, we assign this cluster to the retail market segment. 
-
-    \item \textit{Cluster 5 (light blue)}: The energy provider energis and the energy service providers Iqony Energies and Greencells are contained in this cluster. Hager, which specializes in electrical installation and energy distribution, is also a cluster member. Accordingly, we infer that this cluster represents the energy market segment.
-
-    \item \textit{Cluster 6 (yellow)}: We assign this cluster to the steel production market segment since it contains the steel manufacturers Dillinger and Saarstahl. The defence company Diehl Defence can be considered misclassified, as it should be in its own cluster due to it being the only defence company in our dataset.
-
-    \item \textit{Cluster 7 (orange)}: This cluster consists of the construction companies Backes AG, Peter Gross Bau, and OBG Group, so it represents the construction work market segment.
-
-    \item \textit{Cluster 8 (dark green)}: Because the insurance companies CosmosDirekt and IKK Südwest are part of this cluster, it could indicate the insurance market segment. However, this cluster also contains the healthcare service provider Caritas, which should be in Cluster 2, and the credit card provider PLUSCARD.
-
-    \item \textit{Cluster 9 (lavender)}: The only two members of this cluster are Uni Saar and CISPA, making it representative of the academia market segment.
-
-    \item \textit{Cluster $10$ (pink)}: This cluster consists of food producers such as Kunzler, and Ludwig Schokolade, and thus it represents the food market segment.
+	\item \textit{Cluster 0 (red)}: This cluster consists of automotive manufacturers and suppliers, such as Ford and Michelin. Hence, we follow that this cluster represents the automotive industry market segment.
+	
+	\item \textit{Cluster 1 (light green)}: The steel industry companies MAT Foundries, ThyssenKrupp, and Meiser are part of this cluster. Further cluster members are companies like Hörmann and HYDAC, which also offer products manufactured from steel. Accordingly, we assign this cluster to the steel products market segment. The food manufacturer Wagner can be considered misclassified, as it should be contained in Cluster 10.
+	
+	\item \textit{Cluster 2 (dark blue)}: We attribute this cluster to the healthcare market segment since it contains the medicine manufacturers Dr. Theiss and URSAPARM, Fresenius, which produces dialysis machines, and Unimed, which provides accounting services for hospitals. Note that the IT consulting firm Scheer can be considered misclassified and should be added to Cluster 3.
+	
+	\item \textit{Cluster 3 (beige)}: This cluster contains the IT companies SAP, ORBIS, eurodata, IAS Software, and Welcoalize, representing the IT products and IT consulting market segment. Although the cluster member Bosch is not an IT company, it also offers software products, so we do not consider it misclassified.
+	
+	\item \textit{Cluster 4 (purple)}: This cluster consists of the companies Globus, Möbel Martin, and Villeroy\&Boch, which offer very different products but are all large retailers. Hence, we assign this cluster to the retail market segment. 
+	
+	\item \textit{Cluster 5 (light blue)}: The energy provider energis and the energy service providers Iqony Energies and Greencells are contained in this cluster. Hager is also a cluster member specializing in electrical installation and energy distribution. Accordingly, we infer that this cluster represents the energy market segment.
+	
+	\item \textit{Cluster 6 (yellow)}: We assign this cluster to the steel production market segment since it contains the steel manufacturers Dillinger and Saarstahl. The defense company Diehl Defence can be considered misclassified, as it should be in a single cluster because it is the only defense company in our dataset.
+	
+	\item \textit{Cluster 7 (orange)}: This cluster consists of the construction companies Backes AG, Peter Gross Bau, and OBG Group, so it represents the construction work market segment.
+	
+	\item \textit{Cluster 8 (dark green)}: Because the insurance companies CosmosDirekt and IKK Südwest are part of this cluster, it could indicate the insurance market segment. However, this cluster also contains the healthcare service provider Caritas, which should be in Cluster 2, and the credit card provider PLUSCARD.
+	
+	\item \textit{Cluster 9 (lavender)}: The only two members of this cluster are Uni Saar and CISPA, making it representative of the academia market segment.
+	
+	\item \textit{Cluster $10$ (pink)}: This cluster consists of food producers such as Kunzler and Ludwig Schokolade, and thus it represents the food market segment.
 \end{itemize}
 We conclude that our clustering methods are effective since we saw that each of the 11 clusters mostly contained similar companies, allowing us to infer various market segments.
 
@@ -241,7 +237,7 @@ Lastly, our system recommends placing PanzerTech's new site close to Diehl Defen
 We conclude that our location recommendation system can reliably identify companies in our dataset with similar characteristics to companies seeking to establish sites in Saarland and thus can be used to foster the development of business clusters.
 
 \subsection{Limitations}
-We observed in subsection \ref{sec:clustering-results} that a small number of companies were assigned to the wrong clusters. These companies mostly belonged to sectors that are underrepresented in our dataset, such as defence and financial services, so we would likely achieve more concise cluster assignments if we added more companies from these sectors to our dataset.
+We observed in subsection \ref{sec:clustering-results} that a small number of companies were assigned to the wrong clusters. These companies mostly belonged to sectors that are underrepresented in our dataset, such as defense and financial services, so we would likely achieve more concise cluster assignments if we added more companies from these sectors to our dataset.
 
 Another reason for invalid cluster assignments could be that our utilized sentence transformer was not fine-tuned for company descriptions, so that it could have produced inaccurate embeddings for some descriptions. Further, projecting the embeddings into 2D or 3D space could also cause inaccurate cluster assignments due to a large loss of information. Projecting the embeddings into higher dimensions might avoid this information loss, yet it would complicate or prevent a user-friendly visualization of the clustering results.
 
