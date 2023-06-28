@@ -140,7 +140,7 @@ Once the clustering algorithm converges, we receive cluster labels for each comp
 
 Although our general pipeline represents companies using their descriptions, we emphasize that our approach can also handle utilizing other features. For instance, we can include the companies' products in the encoding by computing the corresponding sentence embeddings and merging them with the description embedding using concatenation, average or max pooling. In section \MakeUppercase{\romannumeral 5}, we will investigate the results of combining company descriptions with other features.
 
-Figure \ref{fig:clustering-analysis} depicts the clustering analysis tab of our user-interface. On the left side, users can define how the description embeddings are computed, the technique and target dimensionality of the dimensionality reduction, and the number of clusters. Additionally, users can specify a subset of additional features, including industry, products, customer base, market positioning, and revenue, which will be combined with the descriptions. After clicking "Compute clustering", the clustered data points are shown on the right side as a 2D or 3D scatter plot. Further, users can see the location and clustering assignment of all companies in our dataset on a map. When hovering the mouse over a company's data point, additional information about the company is shown.
+Figure \ref{fig:clustering-analysis} depicts the clustering analysis tab of our user-interface. On the left side, users can define how the description embeddings are computed, the technique and target dimensionality of the dimensionality reduction, and the number of clusters. Additionally, users can specify a subset of additional features, including industry, products, customer base, market positioning, and revenue, which will be combined with the descriptions. After clicking "Compute clustering", the clustered data points are shown on the right side as a 2D or 3D scatter plot. Further, users can see the location and clustering assignment of all companies in our dataset on a map. When hovering the mouse over a company's data point, additional information about the company is shown, and when double clicking the labels on the legend, only the companies of the corresponding cluster are shown.
 
 \begin{figure}[H]
 	\centering
@@ -242,12 +242,19 @@ We observed in subsection \ref{sec:clustering-results} that a small number of co
 Another reason for invalid cluster assignments could be that our utilized sentence transformer was not fine-tuned for company descriptions, so that it could have produced inaccurate embeddings for some descriptions. Further, projecting the embeddings into 2D or 3D space could also cause inaccurate cluster assignments due to a large loss of information. Projecting the embeddings into higher dimensions might avoid this information loss, yet it would complicate or prevent a user-friendly visualization of the clustering results.
 
 \section{Conclusion}
-\begin{itemize}
-	\item \textbf{Recapitulate the Objectives:} Begin by restating the main project objectives or questions that guided your study. This helps to remind the reader of the purpose and scope of your research \cite{sample-article}.
-	\item \textbf{Summarize the Key Findings:} Provide a brief summary of the main findings from your study. Highlight the most important results and their implications. However, avoid repeating all the details presented in the Results section. Instead, focus on the key outcomes that directly address your research objectives \cite{sample-web}.
-	\item \textbf{Future Research Suggestions:} Identify potential directions for future research based on the limitations or gaps identified in your study. Discuss areas that would benefit from additional investigation or areas where more data or different methodologies could provide deeper insights.
-	\item \textbf{Final remarks:} Provide a concise and thoughtful closing statement that summarizes the overall significance of your research. Reflect on the importance of your study and its potential impact on the field. Consider the broader implications of your findings and emphasize the value of your research contribution.
-\end{itemize}
+The goal of this project was to collect data on companies in Saarland and apply clustering algorithms such that the results can be used to identify market segments and to give location recommendations for novel companies such that business clusters are fostered.
+
+To circumvent the challenges of feature selection and encoding non-numerical features, we represented companies by their publicly available descriptions. We leveraged state-of-the-art language models to transform this highly informative text data into machine-readable embeddings. Lastly, we utilized two approaches to project the embeddings into low-dimensional space where clustering can be applied.
+Further, our methods allowed straightforwardly including other standard company attributes, such as industry, customer base, market positioning, and revenue. 
+To make location recommendations, we passed the descriptions and features of novel companies to our clustering pipeline and then recommended establishing new sites next to the most similar companies in our dataset.
+
+A qualitative evaluation of our methods has shown that they can reliably cluster similar companies, which allowed us to infer market segments in Saarland. Further, our location recommendation system demonstrated its capability of identifying similar companies, given the description of a new company, independently of the total number of similar companies in the dataset.
+
+To allow end-users to leverage our methods, we implemented a user-friendly interface with many functionalities, such as visualizing the clustered data points, modifying the clustering parameters, showing the location of companies, and giving detailed and interpretable location recommendations.
+
+We see many opportunities for future work. Collecting data from more companies in Saarland could improve the clustering results, although the number of (large) companies in Saarland is limited. Thus, applying our methods to larger economies would be highly interesting. Further, fine-tuning our language models using text data from the business sector might lead to more expressive embeddings.
+To this end, we have demonstrated the feasibility and potential of applying language models to economic analysis.
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{bibliography}
