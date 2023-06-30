@@ -57,6 +57,8 @@ can use in your own write-up, if you want to. We explain some important points r
 
 
 \section{Introduction}
+
+
 Identifying market segments in regional economies is crucial for effective marketing strategies and making well-informed business decisions. Further, combining geographical data of companies' locations with information on their corresponding market segments allows for detecting business clusters, which are local concentrations of businesses, manufacturers, suppliers, and institutions from the same field. This geographic proximity of related businesses enables efficient cooperation and knowledge transfer, which has been shown to significantly increase the productivity of all businesses within the cluster (citation). Thus, establishing or further developing business clusters is of high interest to companies and local governments.
 
 \pe{I find the claims made in this paragraph to be to not backed by evidence. While I have no economic background, I was able to source some existing literature, e.g. \href{http://biblioteca.fundacionicbc.edu.ar/images/d/de/Clusters_1.pdf}{1}, \href{https://onlinelibrary.wiley.com/doi/full/10.1111/j.1536-7150.2011.00819.x}{2},
@@ -66,7 +68,9 @@ However, the identification of market segments, and moreover that of business cl
 \pe{This seems a harsh claim, in practice one could argue that it is available through regional connections}
 \nm{We keep the current motivation for using company descriptions and then only later mention that we can also add other features}
 
-This work demonstrates how to identify market segments and develop business clusters by introducing an automatic clustering pipeline and location recommendation system for economic data from the German federal state Saarland. The novelty of our approach is that we rely on language models to encode the companies' information. 
+At the same time, recent advances in natural language processing (NLP), e.g. in the form of the popular ChatGPT \cite{chatgpt}, have led to surprisingly good results in numerous applications. Examples range from complex Code generation to essays to cooking recipes. 
+
+This work demonstrates market segments and business clusters can be identified effectively by introducing an automatic clustering pipeline. Utilizing those clusters, our system is then able to provide a strategic location, which we will demonstrate by using the German federal state Saarland as an example. The novelty of our approach is that we rely on language models to encode the companies' information. 
 
 Our clustering pipeline can be divided into $4$ distinct steps: $1)$ gathering data from the websites of companies in Saarland, $2)$ computing embeddings of the data, $3)$ reducing the embeddings' dimensionality, and $4)$ applying clustering algorithms.
 
@@ -107,11 +111,18 @@ The remaining parts of this paper are structured as follows: In section \MakeUpp
 \color{black}
 \nm{Related work for business stuff is still missing!}
 
+\subsection{Identification and Impacts of Business Clusters}
+
+
+\subsection{Natural Language Processing}
+
 In natural language processing (NLP), translating text data to machine-processable representations is a fundamental challenge for numerous tasks, such as machine translation~\cite{qi2018and}, sentiment analysis~\cite{rezaeinia2019sentiment}, and information retrieval~\cite{ye2016word}, due to the complexity and variability of natural language. A popular approach for representing text data is the utilization of so-called \emph{embeddings}: vectorized representations of text with the property that vectors of text data with similar semantic and syntactic properties will have a smaller distance to vectors of text data with different properties. Thus, embeddings enable quantifying semantic and syntactic similarity in terms of distances in a low-dimensional, dense vector space, making them ideal for applying clustering to our sparse dataset of high-dimensional company descriptions.  
 
 In general, embeddings are learned by training a neural network to perform a task requiring understanding semantic and syntactic information, such as predicting words given their surrounding contexts or predicting subsequent words in sentences. In this process, the network learns a mapping from its text input to low-dimensional representations, containing the information needed to generate correct outputs. Hence, the outputs of this mapping encode all relevant semantic and syntactic information in the text inputs, meaning that, after training, the network's corresponding layers can be reused to compute embeddings for other downstream tasks.
 
 Mikolov et al~\cite{mikolov2013efficient}. popularized learning word embeddings from raw text data in $2013$ by introducing their Word2Vec model. GloVe, developed by Pennington et al.~\cite{pennington2014glove}, improved upon Word2Vec by effectively encoding both local context information and global statistical information into the embeddings, thereby offering more detailed semantic capture. More recently, transformer-based models like BERT, developed by Devlin et al.~\cite{devlin2018bert}, and GPT models by OpenAI~\cite{radford2018improving} have leveraged context-dependent word embeddings by encoding the words themselves and the context in which they are used. So-called sentence transformers extended these approaches by computing embeddings for entire sentences to capture more contextual information than individual word embeddings. Reimers and Gurevych~\cite{reimers2019sentence} introduced the Sentence-BERT model consisting of two Siamese BERT-networks, i.e., two BERT-networks with tied weights, which compute sentence embeddings by embedding each word individually and then applying a pooling layer calculating the maximum or mean over all word embeddings. Starting with pre-trained BERT-networks, Sentence-BERT is fine-tuned using text classification or cosine-similarity tasks, yielding a model capable of generating high-quality sentence embeddings using only a fraction of the original BERT model's computational effort.
+
+\pe{Maybe we should bring out the connection to our approach here a little bit more}
 
 \section{Procedure}
 \input{figure}
