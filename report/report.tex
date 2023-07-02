@@ -51,24 +51,27 @@
 \maketitle
 
 \begin{abstract}
-With this guide, we give an example of what a write-up for the mini-project report could look like. We provide a \LaTeX template that you 
-can use in your own write-up, if you want to. We explain some important points regarding specific types of sections that need to be included in the report.
+Identifying market segments is crucial for effective marketing strategies and well-informed business decisions. Further, combining companies' geographical locations with their market segments allows for detecting business clusters. However, acquiring and processing the data needed to gain such insights into regional economies is labor-intensive. 
+
+We propose to circumvent these challenges by leveraging state-of-the-art language models to transform companies' highly informative public text data into machine-readable data points, and then applying clustering to identify market segments and make location recommendations for novel companies to support business cluster development. 
+
+A qualitative evaluation of our methods being applied to data from the German municipality Saarland demonstrates that our methods can accurately cluster similar companies and assign novel companies to clusters.
 \end{abstract}
 
 
 \section{Introduction}
 
-Deciding on location of a business is a vital strategic decision. Finding the right location can have a number of benefits: First, it is crucial to most businesses to be located close to its customers and suppliers, for more effective marketing or reduced transportation costs, secondly, being located in an active regional cluster can significantly benefit a business development \cite{clustersandcomp,gems-model, regionaladv, clustertheory}. 
+Deciding on the location of a business is a vital strategic decision. Finding the right location can have several benefits: First, it is crucial to most businesses to be located close to their customers and suppliers for more effective marketing or reduced transportation costs. Secondly, being located in an active regional cluster can significantly benefit a business development \cite{clustersandcomp,gems-model, regionaladv, clustertheory}. 
 
-Clusters are local concentrations of businesses, manufacturers, suppliers, and institutions from the same field. Identifying regional clusters is done by combining geographical data of companies' locations with information on their corresponding market segments. This geographic proximity of related businesses enables efficient cooperation and knowledge transfer, which has been shown to significantly increase the productivity of all businesses within the cluster \cite{clustersandcomp,gems-model, regionaladv, clustertheory}. Thus, establishing or further developing business clusters is of high interest to companies and local governments. Therefore, significant effort is spent identifying clusters and market segments in regional economies. 
+Business clusters are local concentrations of businesses, manufacturers, suppliers, and institutions from the same field. Identifying regional clusters is done by combining geographical data of companies' locations with information on their corresponding market segments. This geographic proximity of related businesses enables efficient cooperation and knowledge transfer, which has been shown to significantly increase the productivity of all businesses within the cluster \cite{clustersandcomp,gems-model, regionaladv, clustertheory}. Thus, establishing or further developing business clusters is of high interest to companies and local governments. Therefore, significant effort is spent identifying clusters and market segments in regional economies. 
 
-However, the identification of market segments, and moreover that of business clusters, requires significant amount of manual labor. Typically, one first has to collect information about companies with a location in the targeted region. Afterwards, for each company, their publicly available information must be analyzed to better understand their products, strategic position and market positioning. 
+However, the identification of market segments, and moreover that of business clusters, requires a significant amount of manual labor. Typically, one must first collect information about companies with a location in the targeted region. Afterward, for each company, their publicly available information must be analyzed to understand their products, strategic position, and market positioning. 
 
-This process is very labor-intensive, as businesses do not provide any specific data on the latter points, but it has to be inferred from their product portfolio and websites. Additionally, even simpler data like the number of employees is often unavailable, or only available inside hard to parse company websites, especially for small regional companies.
+This process is very labor-intensive, as businesses do not provide specific data on the latter points, but it must be inferred from their product portfolio and websites. Additionally, even simpler data like the number of employees is often unavailable or only available inside hard-to-parse company websites, especially for small regional companies.
 
-At the same time, recent advances in natural language processing (NLP), e.g. in the form of the popular ChatGPT \cite{chatgpt}, have led to surprisingly good results in numerous applications. Especially, they have proven be very efficient at extracting data and summaries from human written texts.
+At the same time, recent advances in natural language processing (NLP), e.g., the popular ChatGPT \cite{chatgpt}, have yielded surprisingly good results in numerous applications. Especially they have proven to be very efficient at extracting data and summaries from human written texts.
 
-The main contribution of this work is an automatic clustering pipeline to identify market segments and business clusters effectively from publicly available information. Utilizing those clusters, our system is then able to provide a strategic location, which we will demonstrate by using the German federal state Saarland as an example. The novelty of our approach is that we rely on language models to process the companies' information. 
+The main contribution of this work is an automatic clustering pipeline to effectively identify market segments and business clusters from publicly available information. Utilizing those clusters, our system can provide a strategic location, which we will demonstrate by using the German federal state Saarland as an example. The novelty of our approach is that we rely on language models to process the companies' information. 
 
 Our clustering pipeline can be divided into $4$ distinct steps: $1)$ gathering data from the websites of companies in Saarland, $2)$ computing embeddings of the data, $3)$ reducing the embeddings' dimensionality, and $4)$ applying clustering algorithms.
 
@@ -81,7 +84,6 @@ $3)$ We further reduce the dimensionality of the embeddings using non-linear dim
 $4)$ Lastly, we apply well-established clustering algorithms in the low-dimensional feature space to assign each company to a cluster corresponding to a potential market segment.
 
 Our location recommendation system builds upon the clustering pipeline by computing an embedding of a novel company's description, assigning it to a cluster, and then identifying the most similar companies within the cluster. The system then recommends that the novel company locate its site near an established company acting in the same market segment, which fosters business cluster development in Saarland.
-\pe{We might want to shorten this part a little as we will explore it in all details later}
 
 We provide a graphical user-interface for our methods, which visualizes the clustering of companies in Saarland and their locations in an interactive manner, allowing end-users to analyze the various market segments. Further, the interface supports making location recommendations for new company sites using text inputs.
 
@@ -90,39 +92,25 @@ In summary, our main contributions are:
     \item We circumvent the challenges of traditional economic data collection by relying on publicly available company descriptions.
     \item We leverage state-of-the-art language models to apply clustering algorithms to the high-dimensional text data.
     \item We show how our methods can be extended to handle additional features.
-    \item We demonstrate our approach's feasibility using Saarland's economy and provide a user-friendly graphical interface for our methods, allowing for analyzing market segments and location recommendations for establishing business clusters.
+    \item We demonstrate our approach's feasibility using Saarland's economy and provide a user-friendly graphical interface for our methods.
 \end{itemize}
 
-\nm{Adjust this when related work is finally done}
-The remaining parts of this paper are structured as follows: In section \MakeUppercase{\romannumeral 2}, we first examine the economy in Saarland and the theory behind business clusters. Then we look upon existing work on using clustering for economic analysis, and lastly, we investigate work on language models for extracting information from text data. Next, in section \MakeUppercase{\romannumeral 3}, we present our methods in more detail, discussing each step of our clustering pipeline and location recommendation system, and in \MakeUppercase{\romannumeral 4}, we present how we apply our methods to the economy of Saarland. Lastly, we examine our results in section \MakeUppercase{\romannumeral 5} and conclude this work in section \MakeUppercase{\romannumeral 6}.
+The remaining parts of this paper are structured as follows: In section \MakeUppercase{\romannumeral 2}, we examine the concept of business clusters in general and with respect to Saarland. Afterward, we investigate work on language models for extracting information from text data. Next, in section \MakeUppercase{\romannumeral 3}, we present our methods in more detail, discussing each step of our clustering pipeline and location recommendation system, and in \MakeUppercase{\romannumeral 4}, we present how we apply our methods to the economy of Saarland. Lastly, we examine our results in section \MakeUppercase{\romannumeral 5} and conclude this work in section \MakeUppercase{\romannumeral 6}.
 
 \section{Related Work}
-\color{red}
-\begin{itemize}
-    \item General stuff about Saarland's economy and its market segments?
-    \item How market segments are normally identified?
-    \item Theory behind business clusters and maybe related work?
-    \item Related Work on clustering in economy?
-    \item Mention that we collected traditional economic data?
-\end{itemize}
-\color{black}
-\nm{Related work for business stuff is still missing!}
+In this section, we will examine previous work on business clusters, and recent advances in natural language processing.
 
 \subsection{Identification and Impacts of Business Clusters}
 
-Clusters and their advantage have been studied in many works. For example \cite{regionaladv}, examined the well known technology cluster in the Silicon Valley, famous for being the home of many innovative startups even in recent years. 
+Business clusters and their advantages have been studied in many works. For example, \cite{regionaladv} examined the well known technology cluster in the Silicon Valley, famous for being the home of many innovative startups even in recent years. 
 
 \cite{clustertheory} provides detailed discussion of the cluster phenomenon. It discusses preexisting literature on clusters and reviews the two main postivies effects commonly observed in clusters, positive feedback, and productivity \& growth. Additionally, it provides examples for well-known clusters.
 
-
-
-Our region of choice for testing our approach has also been subject of scientific work. It should be noted that most of them examine it for its location on the border of France and Luxembourg or because of its mining and steel producing past.
+Our region of choice for testing our approach, Saarland, has also been subject of scientific work. It should be noted that most of them examine it for its location on the border of France and Luxembourg or because of its mining and steel producing past.
 
 These factors are however of no interest to this work. For example, \cite{saarlandeco1} has focused on the agglomeration of automotive industry in Saarland and the neighboring regions, but focuses on the challenges that the country borders pose to this industry.
 
 The paper \cite{saarlandeco2} specifically compares the economic strategies for development of the regions economy and with a focus on how clusters are developed. Most importantly, they identify some regional clusters. We will revisit these when evaluating our clustering algorithm and compare on the clusters identified by our approach. It should be noted however that the paper was published in 2009, therefore the analysis conducted by this paper was based on the economy at least 14 years before this paper.
-
-\pe{This is on the sparse side but going deeper into the techniques would require more in depth research on what are accepted approaches. Would be good if the business people help here}
 
 \subsection{Natural Language Processing}
 
@@ -130,25 +118,19 @@ In natural language processing (NLP), translating text data to machine-processab
 
 In general, embeddings are learned by training a neural network to perform a task requiring understanding semantic and syntactic information, such as predicting words given their surrounding contexts or predicting subsequent words in sentences. In this process, the network learns a mapping from its text input to low-dimensional representations, containing the information needed to generate correct outputs. Hence, the outputs of this mapping encode all relevant semantic and syntactic information in the text inputs, meaning that, after training, the network's corresponding layers can be reused to compute embeddings for other downstream tasks.
 
-Mikolov et al~\cite{mikolov2013efficient}. popularized learning word embeddings from raw text data in $2013$ by introducing their Word2Vec model. GloVe, developed by Pennington et al.~\cite{pennington2014glove}, improved upon Word2Vec by effectively encoding both local context information and global statistical information into the embeddings, thereby offering more detailed semantic capture. More recently, transformer-based models like BERT, developed by Devlin et al.~\cite{devlin2018bert}, and GPT models by OpenAI~\cite{radford2018improving} have leveraged context-dependent word embeddings by encoding the words themselves and the context in which they are used. So-called sentence transformers extended these approaches by computing embeddings for entire sentences to capture more contextual information than individual word embeddings. Reimers and Gurevych~\cite{reimers2019sentence} introduced the Sentence-BERT model consisting of two Siamese BERT-networks, i.e., two BERT-networks with tied weights, which compute sentence embeddings by embedding each word individually and then applying a pooling layer calculating the maximum or mean over all word embeddings. Starting with pre-trained BERT-networks, Sentence-BERT is fine-tuned using text classification or cosine-similarity tasks, yielding a model capable of generating high-quality sentence embeddings using only a fraction of the original BERT model's computational effort.
-
-\pe{Maybe we should bring out the connection to our approach here a little bit more}
+Mikolov et al~\cite{mikolov2013efficient}. popularized learning word embeddings from raw text data in $2013$ by introducing their Word2Vec model. GloVe, developed by Pennington et al.~\cite{pennington2014glove}, improved upon Word2Vec by effectively encoding both local context information and global statistical information into the embeddings, thereby offering more detailed semantic capture. More recently, transformer-based models like BERT, developed by Devlin et al.~\cite{devlin2018bert}, and GPT models by OpenAI~\cite{radford2018improving, chatgpt} have leveraged context-dependent word embeddings by encoding the words themselves and the context in which they are used. So-called sentence transformers extended these approaches by computing embeddings for entire sentences to capture more contextual information than individual word embeddings. Reimers and Gurevych~\cite{reimers2019sentence} introduced the Sentence-BERT model consisting of two Siamese BERT-networks, i.e., two BERT-networks with tied weights, which compute sentence embeddings by embedding each word individually and then applying a pooling layer calculating the maximum or mean over all word embeddings. Starting with pre-trained BERT-networks, Sentence-BERT is fine-tuned using text classification or cosine-similarity tasks, yielding a model capable of generating high-quality sentence embeddings using only a fraction of the original BERT model's computational effort.
 
 \section{Procedure}
 \input{figure}
 
 Our goal is to collect data points on companies in Saarland and cluster them to identify market segments and recommend locations for companies who plan to establish new sites, such that it supports the development of business clusters. We will present our clustering pipeline and then examine how we can use the results to provide location recommendations. 
 
-\subsection{Identifying related companies through Clustering}
+\subsection{Identifying Related Companies through Clustering}
 Figure \ref{fig:pipeline} shows a graphical representation of our general clustering pipeline, consisting of $4$ steps: $1)$ Collection of descriptions from company websites, $2)$ converting the descriptions to embeddings, $3)$ reducing the dimensionality of the embeddings, and $4)$ applying a clustering algorithm. In the following, we will examine each of these steps in detail.
 
-\textit{$1)$ Collect Descriptions:} The traditional approach for building such a dataset would be to gather several attributes, like revenue, number of employers, and products, for many companies in Saarland and then store each in a fixed-size vector. \pe{TODO: backup with accepted approach}  However, it is not straightforward to encode non-numerical attributes, like products and customer base, such that clustering algorithms can parse them without introducing an unwanted ordering of the attributes' values. 
-Further, some attributes may be unavailable for some companies, meaning we would need to discard them because we require fixed-size vectors, or we would need to insert dummy values, which could lead to unwanted effects.
-
-Lastly, representing a company using a small number of publicly available attributes might be insufficient for capturing all relevant characteristics. For instance, consider the smartphone manufacturers Apple and Samsung: Both companies build smartphones, have over $100.000$ employees, have revenues of over $200$ billion dollars, and have production and sales sites worldwide. Given these attributes, one could argue that Apple and Samsung are very similar companies. Yet, it is commonly known that Apple, with its minimalist design, high-end smartphones targeted toward customers looking to differentiate themselves from other people, and Samsung, with its more utilitarian smartphones targeted toward a broad customer base, are companies with fundamentally different characters.
-\pe{This is a very shallow argument to me, would propose to remove}
-
-To address these challenges to dataset construction, we propose representing companies by the description on their websites instead of numerical attributes. The benefit of using this data is that companies usually design their website to appeal to a very targeted audience. Additionally, they usually include very detailed information on their products, their size and capabilities, as they want to present themselves publicly in a way that attracts customers and investors. Using the text directly circumvents the problem of creating a targeted aggregator for specific information. This makes our approach simpler to implement and a lot more scalable \& automatable for larger target regions. 
+\textit{$1)$ Collect Descriptions:} The traditional approach for building such a dataset would be to gather several attributes, like revenue, number of employers, and products, for many companies in Saarland and then store each in a fixed-size vector. However, it is generally unclear which are the best attributes for representing companies. Further, it is not straightforward to encode non-numerical attributes, like products and customer base, so clustering algorithms can parse them without introducing an unwanted ordering of the attributes' values. 
+Lastly, some attributes may be unavailable for some companies, meaning we would need to discard them because we require fixed-size vectors, or we would need to insert dummy values, which could lead to unwanted effects.
+To address these challenges to dataset construction, we propose representing companies by the description on their websites instead of numerical attributes. The benefit of using this data is that, since companies design their website to attract customers and investors, they include detailed information, such as their products, market positioning, and customer base. Using the text directly circumvents the problem of creating a targeted aggregator for specific information. This makes our approach simpler to implement and a lot more scalable \& automatable for larger target regions. 
 
 \textit{$2)$ Compute Description Embeddings:} To achieve the fixed-size inputs required by clustering algorithms, we map each company description to an embedding that describes the data in a low-dimensional space. We rely on a sentence transformer neural network architecture to compute embeddings for each sentence in a company's description. We propose three approaches to attain a single embedding for each description: we repeatedly concatenate individual sentence embeddings until a fixed size is achieved, take the average over each feature dimension, or take the maximum over each feature dimension. The first approach, which we will call concatenation, preserves each sentence embedding's information but may introduce bias and high dimensionality, whereas the second and third approaches, which we will call average and max pooling, achieve a lower dimensionality but may discard relevant information by only keeping the average of the features or the largest features.
 
@@ -175,7 +157,7 @@ Figure \ref{fig:clustering-analysis} depicts the clustering analysis tab of our 
 \end{figure}
 
 \subsection{Fostering Business Clusters through Location Recommendations}
-We utilize parts of our clustering pipeline to give location recommendations for companies seeking to establish new sites in Saarland. Given the description of the novel company, we compute an embedding using a sentence transformer and apply KPCA or t-SNE to get a low-dimensional feature vector. We then assign the feature vector to a cluster according to the $K$-Means or Agglomerative clustering algorithm and then compute which company within the cluster is most similar to the novel company. Note that when using KPCA and $K$-Means, we can assign the novel data points to a pre-computed clustering, and when using t-SNE and Agglomerative clustering, we compute a new clustering.
+We utilize parts of our clustering pipeline to give location recommendations for companies seeking to establish new sites in Saarland. Given the description of the novel company, we compute an embedding using a sentence transformer and apply KPCA or t-SNE to get a low-dimensional feature vector. We then assign the feature vector to a cluster according to the $K$-Means or agglomerative clustering algorithm and then compute which company within the cluster is most similar to the novel company. Note that when using KPCA and $K$-Means, we can assign the novel data points to a pre-computed clustering, and when using t-SNE and agglomerative clustering, we compute a new clustering.
 Thus, the second approach accounts for the possibility that introducing a novel company might change existing market segments, whereas the first approach does not.
 Given the cluster label of the novel company, the location recommendation is to establish the new company site nearby the most similar company within the cluster, meaning we recommend placing the novel site near the most similar company acting in the same market segment. Thus, our location recommendations support the geographical concentration of companies acting in the same market segment, which helps to foster business clusters in Saarland.
 
@@ -199,13 +181,12 @@ To build our dataset of company descriptions, we manually extracted the descript
 
 For the purpose of the experimental evaluation we conducted the data collection manually. As our target region was very narrow this was easily feasible. However, in the future we might create a simple HTML scraper to scale our approach to larger regions. To test our location recommendation feature, we created company descriptions using GPT-4 \cite{chatgpt}.
 
-Additionally, we evaluate the impact of providing additional features to the clustering pipeline,for which also gathered the features industry, products, customer base, market positioning, and revenue for each company.
+Additionally, we evaluate the impact of providing additional features to the clustering pipeline, for which also gathered the features industry, products, customer base, market positioning, and revenue of each company.
 
-We utilize the popular pre-trained sentence transformer "all-MiniLM-L6-v2" from the HuggingFace hub to compute sentence embeddings for each description. An embedding for the full description is then attained using our concatenation, average, or max pooling approach. When using additional features, we compute embeddings for each feature and combine them with the description embedding in the same way the individual sentence embeddings were combined. \pe{Links and references plz}
+We utilize the popular pre-trained sentence transformer model "all-MiniLM-L6-v2" from the HuggingFace hub~\cite{sentence-transformer-model} to compute sentence embeddings for each description. An embedding for the full description is then attained using our concatenation, average, or max pooling approach. When using additional features, we compute embeddings for each feature and combine them with the description embedding in the same way the individual sentence embeddings were combined.
 Afterward, the embeddings are projected onto 2D or 3D space using KPCA or t-SNE. We chose suitable hyperparameters for KPCA by conducting a grid search over the values $\textit{kernel} = \{\textit{radial basis function}, \textit{sigmoid}, \textit{linear}, \textit{polynomial} \}$ and $\textit{gamma} = \{0.03, 0.032, 0.034, \dots, 0.05\}$, where we found the best values to be $\textit{kernel} = \textit{polynomial}$ and $\textit{gamma} = 0.05$. For t-SNE, we manually fine-tuned the perplexity hyperparameter until we achieved a suitable separation of data points.
 
-To choose the number of clusters for $K$-Means, we started with $K = \sqrt{N}$, where $N$ is the size of the dataset, and then increased $K$ until the clustering aligned with our expectations. For Agglomerative clustering, we chose the final number of clusters through visual inspection of the dendrogram returned by the algorithm.
-
+To choose the number of clusters for $K$-Means, we started with $K = \sqrt{N}$, where $N$ is the size of the dataset, and then increased $K$ until the clustering aligned with our expectations. For agglomerative clustering, we chose the final number of clusters through visual inspection of the dendrogram returned by the algorithm.
 
 \section{Results}
 \begin{figure}[H]
@@ -215,7 +196,7 @@ To choose the number of clusters for $K$-Means, we started with $K = \sqrt{N}$, 
     \label{fig:t-sne-agglomerative}
 \end{figure}
 
-In the following, we will investigate the results of the best-performing configuration of our clustering and location recommendation system. These results were obtained using the following configuration: the description embeddings were computed using max pooling, the embeddings were projected into 2D space using t-SNE, and the clustering was achieved using Agglomerative clustering. We also used the companies' industry as an additional feature.
+In the following, we will investigate the results of the best-performing configuration of our clustering and location recommendation system. These results were obtained using the following configuration: the description embeddings were computed using max pooling, the embeddings were projected into 2D space using t-SNE, and the clustering was achieved using agglomerative clustering. We also used the companies' industry as an additional feature.
  We found that this configuration yields the most sensible predictions of market segments and location recommendations. Figure \ref{fig:t-sne-agglomerative} displays the resulting clustered data points.
 
 \subsection{Clustering}
@@ -246,31 +227,21 @@ In the following, we analyze each of the found clusters and interpret them with 
 \end{itemize}
 We conclude that our clustering methods are effective since we saw that each of the 11 clusters mostly contained similar companies, allowing us to infer various market segments.
 
-\subsection{Comparison to clusters identified by other work}
+\subsection{Comparison to Clusters Identified by Other Work}
 
-As mentioned \cite{saarlandeco2} also identified clusters for the region of Saarland. Specifically, they identified the following clusters by industry (\cite{saarlandeco2}, Table 4, p. 1226)
+As mentioned \cite{saarlandeco2} also identified clusters for the region of Saarland. We compare their results (\cite{saarlandeco2}, Table 4, p. 1226) with the output of our pipeline:
 
-\begin{itemize}
-	\item Coal and mining industries
-	\item Metal industry
-	\item Automobile industry
-	\item Energy sector
-	\item Information and communication technology
-	\item Biotechnology and nanotechnology
-\end{itemize}
-
-Comparing these results with the output of our pipeline we can see that 
 
 \begin{itemize}
 	\item Coal and mining industries: With the decline of coal mining in recent years, there are no more coal mines in Saarland. As the last one closed in 2012, this cluster does not exist anymore. 
-	\item Metal industry is covered by cluster 1 (light green) and cluster 6 (yellow).
-	\item Automobile industry is covered by cluster 0 (red).
-	\item Energy sector is covered by cluster 5 (light blue).
-	\item Information and communication technology is covered by cluster 3 (beige).
-	\item Biotechnology and nanotechnology is covered by cluster 2 (dark blue).
+	\item Metal industry: Covered by cluster 1 (light green) and cluster 6 (yellow).
+	\item Automobile industry: Covered by cluster 0 (red).
+	\item Energy sector: Covered by cluster 5 (light blue).
+	\item Information and communication technology: Covered by cluster 3 (beige).
+	\item Biotechnology and nanotechnology: Covered by cluster 2 (dark blue).
 \end{itemize}
 
-One can see that the results of our pipeline do agree with the general sectors identified by \cite{saarlandeco2}. However, our approach did lead to more fine-grained separation. Additionally, we for example include construction companies, leading to additional companies. However, these sectors are usually not contributing significantly to the region's economy, which is most probably why they are not mentioned in \cite{saarlandeco2}. In summary, the output of our pipeline matches very well with traditionally identified clusters.
+One can see that the results of our pipeline do agree with the general sectors identified by \cite{saarlandeco2}. However, our approach did lead to more fine-grained separation. Additionally, we identified sectors not covered in their work, such as cluster 7 which represents the construction work market segment. However, these sectors are usually not contributing significantly to the region's economy, which is most probably why they are not mentioned in \cite{saarlandeco2}. In summary, the output of our pipeline matches very well with traditionally identified clusters.
 
 \subsection{Location Recommendation}
 To test our location recommendation system, we generated descriptions for four fictional German companies with vastly different characteristics:
@@ -304,7 +275,7 @@ A qualitative evaluation of our methods has shown that they can reliably cluster
 
 To allow end-users to leverage our methods, we implemented a user-friendly interface with many functionalities, such as visualizing the clustered data points, modifying the clustering parameters, showing the location of companies, and giving detailed and interpretable location recommendations.
 
-We see many opportunities for future work. Collecting data from more companies in Saarland could improve the clustering results, although the number of (large) companies in Saarland is limited. Thus, applying our methods to larger economies would be of great interest. This would also allow more comparisons to traditionally identified clusters. Further, fine-tuning our language models using text data from the business sector might lead to more expressive embeddings. To achieve this, efficiently, an automated aggregation system could be developed. As we utilize publicly available websites, this would be easily possible without utilizing 3rd party services.
+We see many opportunities for future work. Collecting data from more companies in Saarland could improve the clustering results, although the number of (large) companies in Saarland is limited. Thus, applying our methods to larger economies would be of great interest. This would also allow more comparisons to traditionally identified clusters. Further, fine-tuning our language models using text data from the business sector might lead to more expressive embeddings. To achieve this, efficiently, an automated aggregation system could be developed. As we utilize publicly available websites, this would be easily possible without relying on 3rd party services.
 To this end, we have demonstrated the feasibility and potential of applying language models to economic analysis.
 
 
