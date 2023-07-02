@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 
-\include{./wits_template.zex}
+\include{./wits_template.tex}
 
 \usepackage{todonotes}
 \newcommand{\pe}[1]{\todo[inline, backgroundcolor=green]{PE: #1}}
@@ -22,26 +22,33 @@
 \usepackage{enumitem}
 
 
-\author{Nicola J. Müller, Robert Leist, Paul Eichler, \\and Tobias Recktenwald}
-\title{Towards Language Model-based Identification of Market Segments and Fostering of Business Clusters}
+
+\author{\small \href{mailto:s8namuel@stud.uni-saarland.de}{Nicola J. Müller}, \href{s8roleis@stud.uni-saarland.de}{Robert Leist}, \href{mailto:s8pleich@uni-saarland.de}{Paul Eichler}, and \href{mailto:s8tsreck@stud.uni-saarland.de}{Tobias Recktenwald}}
+\title{\vspace{-3cm}Towards Language Model-based Identification of Business Clusters}
+\date{}
+
 
 \begin{document}
+	
     \maketitle
+
    \begin{abstract}
-   	Identifying market segments is crucial for effective marketing strategies and well-informed business decisions. Further, combining companies' geographical locations with their market segments allows for detecting business clusters. However, acquiring and processing the data needed to gain such insights into regional economies is labor-intensive. 
-   	
-   	We propose to circumvent these challenges by leveraging state-of-the-art language models to transform companies' highly informative public text data into low-dimensional vectors and then applying clustering to identify market segments and make location recommendations for novel companies to support business cluster development. 
-   	
-   	A qualitative evaluation of our methods being applied to data from the German municipality Saarland demonstrates that our methods can accurately cluster similar companies and assign novel companies to existing clusters.
+	
+	\textit{\small
+	One of the most important decisions every business has to decide on a physical location. Identifying the right location is crucial for effective marketing strategies reaching the intended customer base, it can reduce transportation costs, and locating in a vibrant regional business clusters can have significant positive effects on business development.
+	However, strategically acquiring \& analyzing data on regional economies, the corresponding companies along with their target market segments is very complex and labor-intensive.}
+	\textit{\small
+	We propose to circumvent these challenges by leveraging state-of-the-art language models to transform publicly available company websites, into machine-readable data points and  applying clustering to make location recommendations. We demonstrate accuracy of identified clusters by applying our method to data from the German municipality Saarland.
+	}
    \end{abstract}
    
    
    \section{Introduction}
    Deciding on the location of a business is a vital strategic decision: First, most businesses must be located close to their customers and suppliers for more effective marketing or reduced transportation costs. Secondly, being located in an active regional cluster can significantly benefit business growth \cite{clustersandcomp,gems-model, regionaladv, clustertheory}. 
    
-   Business clusters are local concentrations of companies, manufacturers, suppliers, and institutions from the same field. Identifying clusters combines geographical data of companies' locations with information on their corresponding market segments. This proximity of related companies enables efficient cooperation and knowledge transfer, which has been shown to significantly increase the productivity of all companies within the cluster \cite{clustersandcomp,gems-model, regionaladv, clustertheory}. Thus, establishing or further developing business clusters is of high interest to companies and local governments. Therefore, significant effort is spent identifying clusters and market segments in regional economies. 
+   Business clusters are local concentrations of companies, manufacturers, suppliers, and institutions from the same field. Identifying clusters combines geographical data of companies' locations with information on their corresponding market segments. This proximity of related companies enables efficient cooperation and knowledge transfer, which has been shown to significantly increase the productivity of all companies within the cluster \cite{clustersandcomp,gems-model, regionaladv, clustertheory}. Thus, establishing or further developing business clusters is of high interest to companies and local governments. Therefore, significant effort is spent identifying clusters in regional economies. 
    
-   However, identifying market segments and business clusters requires a significant amount of manual labor. Typically, one must first collect information about companies in the targeted region. Afterward, for each company, their publicly available information must be analyzed to understand their products, strategic position, market positioning, and further characteristics. 
+   However, them requires a significant amount of manual labor. Typically, one must first collect information about companies in the targeted region. Afterward, for each company, their publicly available information must be analyzed to understand their products, strategic position, market positioning, and further characteristics. 
    This process is labor-intensive, as businesses do not provide specific data on the latter points, but it must be inferred from their product portfolio and websites. Additionally, even basic data like the number of employees is often unavailable or difficult to collect automatically, especially for small regional companies.
    At the same time, recent advances in natural language processing (NLP), e.g., the popular ChatGPT \cite{chatgpt}, have yielded surprisingly good results in numerous applications. Especially they have proven to be very efficient at extracting data and summaries from human written texts.
    
@@ -63,10 +70,9 @@
    
    Business clusters and their advantages have been studied in many works. For example, \cite{regionaladv} examined the well-known technology cluster in Silicon Valley, famous for being the home of many innovative start-ups. 
    \cite{clustertheory} provides a detailed discussion of the cluster phenomenon. It discusses preexisting literature on clusters and reviews the main positive effects commonly observed in clusters, positive feedback and productivity \& growth. Additionally, it provides examples of well-known clusters.
-   
    The region of choice for testing our approach, Saarland, has also been the subject of scientific work. It should be noted that Saarland is mostly investigated for its location on the border of France and Luxembourg or because of its mining and steel-producing past.
    These factors are, however, of no interest to this work. For example, \cite{saarlandeco1} has focused on the agglomeration of the automotive industry in Saarland and the neighboring regions but focuses on the challenges that the country borders pose to this industry.
-   The paper \cite{saarlandeco2} specifically compares the economic strategies for developing the region's economy with a focus on how clusters are developed. Most importantly, they identify some regional business clusters. We will revisit these when evaluating our clustering algorithm and compare the clusters and market segments identified by our approach. It should be noted, however, that the paper was published in 2009, meaning their analysis could be outdated to some extent.
+   The paper \cite{saarlandeco2} specifically compares the economic strategies for developing the region's economy with a focus on how clusters are developed. Most importantly, they identify some regional business clusters. We will revisit these when evaluating our clustering algorithm and compare the clusters and market segments identified by our approach. It should be noted, however, that the paper was published in 2009, meaning their analysis is outdated to some extent.
    
    In natural language processing (NLP), translating text data to machine-processable representations is a fundamental challenge for numerous tasks, such as sentiment analysis~\cite{rezaeinia2019sentiment}, and information retrieval~\cite{ye2016word}, due to the complexity and variability of natural language. A popular approach for representing text data is the utilization of so-called \emph{embeddings}: vectorized representations of text with the property that vectors of text data with similar semantic and syntactic properties will have a smaller distance to vectors of text data with different properties, making them ideal for applying clustering to our sparse dataset of high-dimensional company descriptions.  
    Mikolov et al~\cite{mikolov2013efficient}. popularized learning word embeddings from raw text data in $2013$ by introducing their Word2Vec model. More recently, transformer-based models like BERT, developed by Devlin et al.~\cite{devlin2018bert}, and GPT models by OpenAI~\cite{radford2018improving, chatgpt} have leveraged context-dependent word embeddings by encoding the words themselves and the context in which they are used. So-called sentence transformers extended these approaches by computing embeddings for entire sentences to capture more contextual information than individual word embeddings. Reimers and Gurevych~\cite{reimers2019sentence} introduced the Sentence-BERT model, capable of generating high-quality sentence embeddings using only a fraction of the original BERT model's computational effort.
@@ -153,13 +159,10 @@
    We represented companies by their public descriptions, which allowed us to leverage state-of-the-art language models to transform the highly informative text data into embeddings. Further, our methods enabled straightforwardly including other company attributes. Given the embeddings, we applied a clustering algorithm to infer potential market segments.
    To make location recommendations, we passed the descriptions and features of novel companies to our clustering pipeline and recommended establishing new sites next to the most similar companies in our dataset.
    
-   A qualitative evaluation of our methods has shown that they can reliably cluster similar companies, which allowed us to infer market segments in Saarland. Further, our location recommendation system demonstrated its capability of identifying similar companies, given the description of a new company.
-   
-   To allow end-users to leverage our methods, we implemented a user-friendly interface with many functionalities, such as visualizing the clustered data points, showing the location of companies, and giving detailed and interpretable location recommendations.
+   A qualitative evaluation of our methods has shown that they can reliably cluster similar companies, which allowed us to infer market segments in Saarland. Further, our location recommendation system demonstrated its capability of identifying similar companies, given the description of a new company. To allow end-users to leverage our methods, we implemented a user-friendly interface with many functionalities, such as visualizing the clustered data points, showing the location of companies, and giving detailed and interpretable location recommendations.
    
    A promising opportunity for future work would be fine-tuning our language models using text data from the business sector since it might lead to more expressive embeddings. To achieve this efficiently, an automated aggregation system could be developed. As we rely on public websites, such a system could be easily implemented without relying on 3rd party services.
-   
-   To this end, we have demonstrated the feasibility and potential of applying language models to economic analysis.
+
     
     \bibliographystyle{IEEEtran}
 	\bibliography{bibliography}
