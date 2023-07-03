@@ -160,6 +160,8 @@ cython_debug/
 .idea/
 .DS_Store
 
+.vscode
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
